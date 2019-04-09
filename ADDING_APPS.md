@@ -84,19 +84,19 @@ Adding applications to one or more gateways involves a number of steps:
 
 1. Create a new App entry in DCS. This basically creates a unique name (unique cloud wide) for 
 the App, which will be used to refer to App and all it's versions, in all configurations. This is done
-with the [`createApp`](https://github.com/WigWagCo/enterprise-tools#createapp) command in `dcs-tools` which uses the `PUT /apps/{appName}` REST call. 
+with the [`createApp`](https://github.com/armPelionEdge/enterprise-tools#createapp) command in `dcs-tools` which uses the `PUT /apps/{appName}` REST call. 
 
 1. Create a _version_ of the App in DCS, which will inform DCS about the image's location. 
-This is done with the [`publishApp`](https://github.com/WigWagCo/enterprise-tools#publishapp) commands in `dcs-tools` which uses
+This is done with the [`publishApp`](https://github.com/armPelionEdge/enterprise-tools#publishapp) commands in `dcs-tools` which uses
 the `PUT /apps/{appname}/versions/{version}` REST call.
 
 1. Next you will create a _Relay configuration_ which defines which App (one or more) will be ran in what process. For simplicity sake
-you can simply define a single process here, which will run your single App. This is done through the [`createRelayConfig`](https://github.com/WigWagCo/enterprise-tools#createrelayconfig)
+you can simply define a single process here, which will run your single App. This is done through the [`createRelayConfig`](https://github.com/armPelionEdge/enterprise-tools#createrelayconfig)
 which uses the `POST /relayconfigurations` REST call.
 
-1. Finally, you can _apply_ this configuration to one or more Relays / gateways. This is done with the [`applyRelayConfig`](https://github.com/WigWagCo/enterprise-tools#applyrelayconfig) command
+1. Finally, you can _apply_ this configuration to one or more Relays / gateways. This is done with the [`applyRelayConfig`](https://github.com/armPelionEdge/enterprise-tools#applyrelayconfig) command
 in `dcs-tools` which uses the `POST /relaytasks` REST call. This call will give you a _Task ID_ back. 
 
-1. The _Task ID_ can be followed up on with the [`getRelayTask`](https://github.com/WigWagCo/enterprise-tools#getrelaytask) command. This is implemented
+1. The _Task ID_ can be followed up on with the [`getRelayTask`](https://github.com/armPelionEdge/enterprise-tools#getrelaytask) command. This is implemented
 using the `GET /relaytasks/{taskId}` REST call. 
 

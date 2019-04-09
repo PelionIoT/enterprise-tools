@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WigWagCo/enterprise-tools.git"
+    "url": "git+https://github.com/armPelionEdge/enterprise-tools.git"
   },
   "author": "Ed Hemphill <npm@wigwag.com> (http://www.wigwag.com/)",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/WigWagCo/enterprise-tools/issues"
+    "url": "https://github.com/armPelionEdge/enterprise-tools/issues"
   },
-  "homepage": "https://github.com/WigWagCo/enterprise-tools#readme",
+  "homepage": "https://github.com/armPelionEdge/enterprise-tools#readme",
   "bin": {
     "dcs-tools": "./index.js"
   },

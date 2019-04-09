@@ -9,7 +9,7 @@ You must have node.js installed on your machine. Goto [nodejs.org](https://nodej
 For a variety of reasons WigWag does not recommend installing `npm` modules globally as a developer. 
 
     mkdir tools
-    npm install git+https://githubusername:githubpass@github.com/WigWagCo/enterprise-tools.git
+    npm install git+https://githubusername:githubpass@github.com/armPelionEdge/enterprise-tools.git
 
 You can user any directory name you like vs. `tools`
 
@@ -43,7 +43,7 @@ then, commands like:
 
 If you really want to...
 
-    npm install -g https://github.com/WigWagCo/enterprise-tools
+    npm install -g https://github.com/armPelionEdge/enterprise-tools
 
 If you have checked out the project, run: 
 
@@ -387,6 +387,6 @@ Above, `ygoyal@izuma.net` is a root admin for the cloud `devcloud.wigwag.io`. Th
 
 ### Typical Procedures
 
-* [Adding Applications to Relay](https://github.com/WigWagCo/enterprise-tools/blob/master/ADDING_APPS.md)
-* [Moving Relays to Sites](https://github.com/WigWagCo/enterprise-tools/blob/master/ACCOUNT_SITES.md)
+* [Adding Applications to Relay](https://github.com/armPelionEdge/enterprise-tools/blob/master/ADDING_APPS.md)
+* [Moving Relays to Sites](https://github.com/armPelionEdge/enterprise-tools/blob/master/ACCOUNT_SITES.md)
 

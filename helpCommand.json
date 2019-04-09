@@ -1,0 +1,678 @@
+{
+    "VirtualDevicecreate": {
+        "Usage": "VirtualDevicecreate [device name] \n\t\t Example: VirtualDevicecreate LightBulb ",
+        "Description": "Create new device controller from available templates. It returns the resourceID on which new device controller is created."
+    },
+    "VirtualDeviceslist": {
+        "Usage": "VirtualDeviceslist \n\t\t Example: VirtualDeviceslist",
+        "Description": "List created virtual device controller's resourceIDs."
+    },
+    "VirtualDeviceTemplateslist": {
+        "Usage": "VirtualDeviceTemplateslist \n\t\t Example: VirtualDeviceTemplateslist ",
+        "Description": "List available virtual devices templates."
+    },
+    "VirtualDevicestop": {
+        "Usage": "VirtualDevicestop [resourceID] \n\t\t Example: VirtualDevicestop VirtualLightBulb1",
+        "Description": "To stop running device controller. It takes valid resourceID as argument."
+    },
+    "VirtualDevicedelete": {
+        "Usage": "VirtualDevicedelete [resourceID] \n\t\t Example: VirtualDevicedelete VirtualLightBulb1",
+        "Description": "To stop and forget a virtual device controller."
+    },
+    "VirtualDevicesdeleteAll": {
+        "Usage": "VirtualDevicesdeleteAll \n\t\t Example: VirtualDevicesdeleteAll ",
+        "Description": "Deletes all the virtual device controllers."
+    },
+    "help": {
+        "Usage": "help or help [command] \n\t\t Example: help or help VirtualDevicesdeleteAll",
+        "Description": "Provide help for each command."
+    },
+    "set-accountid": {
+        "Usage": "set-accountid [accountID] \n\t\t Example: set-accountid d55fa29dbad3418883374168ba4791fd",
+        "Description": "Sets the active account for the shell to use."
+    },
+    "set-siteid": {
+        "Usage": "set-siteid [siteID] \n\t\t Example: set-siteid b34c748c4adb4f72b56b213e14161992",
+        "Description": "Sets the site ID for the shell to use."
+    },
+    "modbusDeleteAll": {
+        "Usage": "modbusDeleteAll \n\t\t Example: modbusDeleteAll",
+        "Description": "To delete all modbus devices."
+    },
+    "getDiagnostics": {
+        "Usage": "getDiagnostics \n\t\t Example: getDiagnostics",
+        "Description": "Gives information about Relay."
+    },
+    "zigbeeStartPairing": {
+        "Usage": "zigbeeStartPairing \n\t\t Example: zigbeeStartPairing",
+        "Description": "to pair zigbee devices."
+    },
+    "zwaveStartPairing": {
+        "Usage": "zwaveStartPairing \n\t\t Example: zwaveStartPairing",
+        "Description": "To pair zwave devices."
+    },
+    "6lowpanStartPairing": {
+        "Usage": "6lowpanStartPairing [filamentID] \n\t\t Example: 6lowpanStartPairing WWFL00022Q",
+        "Description": "To pair wigwag filament over IP."
+    },
+    "getAllDevicesNames": {
+        "Usage": "getAllDevicesNames \n\t\t Example: getAllDevicesNames",
+        "Description": ""
+    },
+    "bacnetActivityLog": {
+        "Usage": "bacnetActivityLog \n\t\t Example: bacnetActivityLog",
+        "Description": "To find the activity of bacnet device."
+    },
+    "bacnetGetAllDeviceStates": {
+        "Usage": "bacnetGetAllDeviceStates \n\t\t Example: bacnetGetAllDeviceStates",
+        "Description": "Get all bacnet device current state."
+    },
+    "bacnetSendWhoIs": {
+        "Usage": "bacnetSendWhoIs \n\t\t Example: bacnetSendWhoIs",
+        "Description": "Send whoIs service request on bacnet line."
+    },
+    "bacnetDeleteAll": {
+        "Usage": "bacnetDeleteAll \n\t\t Example: bacnetDeleteAll",
+        "Description": "Delete all bacnet device controllers"
+    },
+    "set-siteid-as-accountid": {
+        "Usage": "set-siteid-as-accountid \n\t\t Example: set-siteid-as-accountid",
+        "Description": "set siteID equal to the accountID"
+    },
+    "show-responses": {
+        "Usage": "show-responses \n\t\t Example: show-responses",
+        "Description": "shows pending requests"
+    },
+    "poller-status": {
+        "Usage": "poller-status {status} {if on than time in ms for pole} \n\t\t Example: poller-status on 200 \n\t\t Example: poller-status off ",
+        "Description": "to pole the status"
+    },
+    "createSiteGroup": {
+        "Usage": "createSiteGroup {group name} {option} {siteID} \n\t\t Example: createSiteGroup X-group add b555427547128547157415284518745xxxx",
+        "Description": "creats a group of sites"
+    },
+    "getSiteGroup": {
+        "Usage": "getSiteGroup {group name (optional)} \n\t\t Example: getSiteGroup India",
+        "Description": "information about site group"
+    },
+    "getAllSiteGroups": {
+        "Usage": "getAllSiteGroups \n\t\t Example: getAllSiteGroups",
+        "Description": "Get all site groups"
+    },
+    "deleteSiteGroup": {
+        "Usage": "deleteSiteGroup {group name} \n\t\t Example: deleteSiteGroup India",
+        "Description": "Delete a particular group"
+    },
+    "subscribeToEvents": {
+        "Usage": "subscribeToEvents \n\t\t Example: subscribeToEvents",
+        "Description": "subscribe To Events get update"
+    },
+    "createRole": {
+        "Usage": "createRole {name} {accountID} \n\t\t Example: createRole XYZ d55hvdhhvdqjhvdbiqwjkvdi}",
+        "Description": "craete a role for particular account"
+    },
+    "getaRole": {
+        "Usage": "getaRole {roleID}\n\t\t Example: getaRole fveuhfvewjbvffivkebrhkb",
+        "Description": "Gives details of a particular role"
+    },
+    "getRoles": {
+        "Usage": "getRoles {userID} {accountID} {name} \n\t\t",
+        "Description": "Get all roles"
+    },
+    "createGroup": {
+        "Usage": "createGroup {resource group name} \n\t\t Example: createGroup Kitchen",
+        "Description": "creates a group of resources"
+    },
+    "deleteaRole": {
+        "Usage": "deleteaRole {roleID} \n\t\t Example: deleteaRole ywbefyw63rydvbe3uf43w7f8",
+        "Description": "delete a particular role"
+    },
+    "updateGroup": {
+        "Usage": "updateGroup {resource group location} {add/remove} {resourceID} \n\t\t Example: updateGroup Kitchen add VirtualThermostat1125",
+        "Description": "add or remove the devices from a resource group"
+    },
+    "getGroup": {
+        "Usage": "getGroup {group location} \n\t\t Example: getGroup kitchen",
+        "Description": "gives details of the resiurce group"
+    },
+    "deleteGroup": {
+        "Usage": "deleteGroup {resource group location} \n\t\t Example: deleteGroup badroom",
+        "Description": "delete the resource group"
+    },
+    "modbusStart": {
+        "Usage": "modbusStart {path of the modbus receipies in json}\n\t\t Example: modbusStart /pathtofile/file.json",
+        "Description": "publish modbus receipes on relay"
+    },
+    "modbusGetDeviceMetadata": {
+        "Usage": "modbusGetDeviceMetadata \n\t\t Example: modbusGetDeviceMetadata",
+        "Description": "gives all the device meta data like its state, address and facede etc."
+    },
+    "modbusListDevices": {
+        "Usage": "modbusListDevices \n\t\t Example: modbusListDevices",
+        "Description": "list all the devices connected to the Imod6"
+    },
+    "modbusLogLevel": {
+        "Usage": "modbusLogLevel {1 to 5} \n\t\t",
+        "Description": "gives log information of a modbus device"
+    },
+    "modbusGetAllDeviceStates ": {
+        "Usage": "modbusGetAllDeviceStates \n\t\t Example: modbusGetAllDeviceStates",
+        "Description": "gives state of each device "
+    },
+    "modbusConfiguration": {
+        "Usage": "modbusConfiguration \n\t\t Example: modbusConfiguration",
+        "Description": "gives the modbusConfiguration of Imod6"
+    },
+    "startTunnel": {
+        "Usage": "startTunnel \n\t\t Example: startTunnel",
+        "Description": "used to login into relay when you are not in local network"
+    },
+    "postRequests": {
+        "Usage": "postRequests [selection][command] [type] [property] [argument] [value] \n\t\t Example: postRequests id=-------- create call null Button",
+        "Description": "return your reque"
+    },
+    "getHistory": {
+        "Usage": "node index.js -c [cloud] -u [user ID] -p [password] -a [accountID] -s [siteID] getHistory",
+        "Description": "gives history of a device"
+    },
+    "getRelays": {
+        "Usage": "getRelays \n\t\t Example: getRelays",
+        "Description": "List all the relays attached to an account"
+    },
+    "moveRelayToAccount": {
+        "Usage": "moveRelayToAccount {relayID} {accountID} {pairing code} \n\t\t Example: moveRelayToAccount WDRL000003 d55fa29dbad3418883374168ba4791fd AN2XZWQ8R3AS6U7B8XGB6Q8MP",
+        "Description": "move a relay to an account"
+    },
+    "moveRelayToSite": {
+        "Usage": "moveRelayToSite [relayID] [siteID] [pairing code] \n\t\t Example: moveRelayToSite WDRL000003 b34c748c4adb4f72b56b213e14161992 AN2XZWQ8R3AS6U7B8XGB6Q8MP",
+        "Description": "move relay to a site"
+    },
+    "listSiteResources": {
+        "Usage": "listSiteResources \n\t\t Example: listSiteResources",
+        "Description": "list all the resources attached to a site"
+    },
+    "forgetSiteResource": {
+        "Usage": "forgetSiteResource {resourceID} \n\t\t Example: forgetSiteResource WWFL00022Q",
+        "Description": "used to delete or unpair a device from the relay"
+    },
+    "getSiteResourceState": {
+        "Usage": "getSiteResourceState {resourceID} \n\t\t Example: getSiteResourceState ZW010f200108015",
+        "Description": "gives the state of a resources"
+    },
+    "updateSiteResourceState": {
+        "Usage": "updateSiteResourceState {resourceID} {resource state} {value} \n\t\t Example: updateSiteResourceState VirtualLightBulb1110 power off",
+        "Description": "updates the state of a resource"
+    },
+    "getResponse": {
+        "Usage": "getResponse {request ID} \n\t\t getResponse fbewiufvwif212",
+        "Description": "gives responce of given request Id"
+    },
+    "createSite": {
+        "Usage": "createSite \n\t\t Example: createSite",
+        "Description": "it creates a new site"
+    },
+    "getSites": {
+        "Usage": "getSites \n\t\t Example: getSites",
+        "Description": "it gives a object with all the sites in an account with its info"
+    },
+    "updateSite": {
+        "Usage": "updateSite {boolan value (true/false)} {update} \n\t\t Example: updateSite true hdsvfehjfjbdejwk",
+        "Description": "updates a site"
+    },
+    "deleteSite": {
+        "Usage": "deleteSite {siteID to be deleted} \n\t\t Example: deleteSite d3e3hvfkjbe3fi3bfkjb",
+        "Description": "delete a site"
+    },
+    "getSiteinterfaces": {
+        "Usage": "getSiteinterfaces \n\t\t Example: getSiteinterfaces",
+        "Description": "list all the interface of deviceJS"
+    },
+    "getSiteresourcetypes": {
+        "Usage": "getSiteresourcetypes \n\t\t Example: getSiteresourcetypes",
+        "Description": "it list all the respource type to the relay"
+    },
+    "getAccounts": {
+        "Usage": "getAccounts \n\t\t Example: getAccounts",
+        "Description": "list all accountID to the cloud"
+    },
+    "getAccountsExt": {
+        "Usage": "",
+        "Description": ""
+    },
+    "postSchedule": {
+        "Usage": "postSchedule {object of schedule} \n\t\t Example: postSchedule {json object}",
+        "Description": "Update a Schedule"
+    },
+    "getSchedules": {
+        "Usage": "getSchedules \n\t\t Example: getSchedules",
+        "Description": "get all posted schedule"
+    },
+    "getaSchedule": {
+        "Usage": "getaSchedule {scheduleID} \n\t\t Example:getaSchedule ewvewihfveiflivf",
+        "Description": "return a schedule related to the scheduleID"
+    },
+    "putSchedule": {
+        "Usage": "putSchedule {scheduleid} {JSON string for schedule} \n\t\t Example: putSchedule 0da2dfbad58249e2a15eda4fa22c0712 {json object}",
+        "Description": ""
+    },
+    "deleteSchedule": {
+        "Usage": "deleteSchedule {scheduleid} \n\t\t deleteSchedule f77625ea653e4273b6b94990c22573ed",
+        "Description": "Delete a schedule at a site"
+    },
+    "getUsers": {
+        "Usage": "getUsers \n\t\t Example: getUsers",
+        "Description": "List and iterate through users within an account. An administrator will be able to list all users"
+    },
+    "getUserinfo": {
+        "Usage": "Userinfo {userid} \n\t\t Example: getUserinfo 65c3cc0b46ed4ee0ad03c63cc7870107",
+        "Description": "get information about a user"
+    },
+    "executeSiteResourceCommand": {
+        "Usage": "executeSiteResourceCommand [deviceID] [command] [argument] \n\t\t Example: executeSiteResourceCommand id=anydeviceID emit 900,90,400",
+        "Description": "Emit events for the device run getSiteResourceState to verify."
+    },
+    "getDiagnostics": {
+        "Usage": "getDiagnostics {-s} \n\t\t Example: getDiagnostics -s",
+        "Description": "gives helth info of the relay"
+    },
+    "VirtualDeviceStopPeriodicEvents": {
+        "Usage": "VirtualDeviceStopPeriodicEvents \n\t\t Example: VirtualDeviceStopPeriodicEvents",
+        "Description": "stops all periodic events for virtual devices"
+    },
+    "VirtualDeviceGeneratePeriodicEvents": {
+        "Usage": "VirtualDeviceGeneratePeriodicEvents \n\t\t Example: VirtualDeviceGeneratePeriodicEvents",
+        "Description": "start all periodic events for virtual devices"
+    },
+    "createUserAccessRule": {
+        "Usage": "createUserAccessRule} {user email} {JSON string for rule}",
+        "Description": " Run to give permission to other account"
+    },
+    "putImage": {
+        "Usage": "",
+        "Description": ""
+    },
+    "getImage": {
+        "Usage": "",
+        "Description": ""
+    },
+    "createApp": {
+        "Usage": "",
+        "Description": ""
+    },
+    "publishApp": {
+        "Usage": "",
+        "Description": ""
+    },
+    "listApps": {
+        "Usage": "",
+        "Description": ""
+    },
+    "bacnetListDevices": {
+        "Usage": "bacnetListDevices \n\t\t Example: bacnetListDevices",
+        "Description": "List bacnet device with its specification"
+    },
+    "bacnetWhoHas": {
+        "Usage": "bacnetWhoHas {ObjectType} {ObjectInstance}\n\t\t Example: bacnetWhoHas 4 1",
+        "Description": "returs Instace details of the "
+    },
+    "bacnetReadProperty": {
+        "Usage": "bacnetReadProperty [DeviceId] [ObjectType] [ObjectInstance] [ObjectProperty] \n\t\t Example: bacnetReadProperty 1 4 1 28",
+        "Description": "return Property of bacnet"
+    },
+    "bacnetWriteProperty": {
+        "Usage": "bacnetWriteProperty [DeviceId] [ObjectType] [ObjectInstance] [ObjectProperty] [PropertyIndex (use 0xFFFFFFFF)] [DataType] [Priority] [Value] \n\t\t Example: bacnetWriteProperty 1 4 1 0xFFFFFFFF 7 8 anyValue",
+        "Description": "write a property of bacnet"
+    },
+    "bacnetRelinquishAll": {
+        "Usage": "bacnetRelinquishAll [Interface/Facade] [Priority] [ReliniquishDefaultTextValue] \n\t\t  Example: bacnetRelinquishAll Facades/Switchable 8 off",
+        "Description": "change a interface of bacnet device"
+    },
+    "bacnetSetPriority": {
+        "Usage": "bacnetSetPriority {Priority value} \n\t\t Example: bacnetSetPriority 8",
+        "Description": "set bacnet priority"
+    },
+    "bacnetRelinquishDefault": {
+        "Usage": "bacnetRelinquishDefault {Interface/Facade} \n\t\t Example: bacnetRelinquishDefault Facades/Switchable",
+        "Description": "make default settings of a facade"
+    },
+    "bacnetPriorityArray": {
+        "Usage": "bacnetPriorityArray {Interface/Facade} \n\t\t Example: bacnetPriorityArray Facades/Switchable",
+        "Description": "return a array of bacnet priority"
+    },
+    "bacnetStartAll": {
+        "Usage": "bacnetStartAll \n\t\t Example: bacnetStartAll",
+        "Description": "start all bacnet device connected to the relay"
+    },
+    "bacnetGetHealth": {
+        "Usage": "bacnetGetHealth \n\t\t Example: bacnetGetHealth",
+        "Description": "return all its health status"
+    },
+    "bacnetGetRecipes": {
+        "Usage": "bacnetGetRecipes \n\t\t Example: bacnetGetRecipes",
+        "Description": "return all bacnet receipes"
+    },
+    "bacnetLogLevel": {
+        "Usage": "bacnetLogLevel {log value} \n\t\t Example: bacnetLogLevel 2",
+        "Description": "return vacnet log level"
+    },
+    "bacnetDeleteRecipes": {
+        "Usage": "bacnetDeleteRecipes \n\t\t Example: bacnetDeleteRecipes",
+        "Description": "delete all the receipes of bacnet on relay"
+    },
+    "bacnetSaveRecipe": {
+        "Usage": "bacnetSaveRecipe {location of the bacnet receipes} \n\t\t Example: bacnetSaveRecipe /location_of_receipies.json",
+        "Description": "save bacnet receipes"
+    },
+    "getAllResourceStates": {
+        "Usage": "getAllResourceStates \n\t\t Example: getAllResourceStates",
+        "Description": "return state of each resource"
+    },
+    "zwaveRemoveDevice": {
+        "Usage": "zwaveRemoveDevice \n\t\t Example: zwaveRemoveDevice",
+        "Description": "remove zwave devices"
+    },
+    "renameDevice": {
+        "Usage": "renameDevice [resourceID] [Name] \n\t\t Example: renameDevice VirtualThermostat1 'Kitchen Thermostat'",
+        "Description": "rename any"
+    },
+    "getAllDeviceNames": {
+        "Usage": "getAllDeviceNames \n\t\t Example: getAllDeviceNames",
+        "Description": "return get all devices name"
+    },
+    "getSitedatabase": {
+        "Usage": "getSitedatabase \n\t\t Example: getSitedatabase",
+        "Description": "return all the database of the site"
+    },
+    "getSitebuckets": {
+        "Usage": "getSitebuckets {getSitedatabase} \n\t\t Example: getSitebuckets lww",
+        "Description": "return site bucket of the site database"
+    },
+    "getKeysdata": {
+        "Usage": "",
+        "Description": ""
+    },
+    "updateKeys": {
+        "Usage": "",
+        "Description": ""
+    },
+    "updateSiteResourceName": {
+        "Usage": "updateSiteResourceName \n\t\t Example: updateSiteResourceName VirtualLightBulb1110 LightBulb",
+        "Description": "updates the name of a device"
+    },
+    "zigbeeGetPanId": {
+        "Usage": "zigbeeGetPanId \n\t\t Example: zigbeeGetPanId",
+        "Description": "returns pan ID of zigbee device"
+    },
+    "zigbeeDeleteAll": {
+        "Usage": "zigbeeDeleteAll \n\t\t Example: zigbeeDeleteAll",
+        "Description": "delete all the zigbee network"
+    },
+    "zigbeeGetChannel": {
+        "Usage": "zigbeeGetChannel \n\t\t Example: zigbeeGetChannel",
+        "Description": "return channel of the zigbee device"
+    },
+    "zigbeeNetworkTopology": {
+        "Usage": "zigbeeNetworkTopology \n\t\t Example: zigbeeNetworkTopology",
+        "Description": "return network topology of zigbee devices"
+    },
+    "zigbeeStatus": {
+        "Usage": "zigbeeStatus \n\t\t Example: zigbeeStatus",
+        "Description": "return status of zigbee device"
+    },
+    "zigbeeGetAddress": {
+        "Usage": "zigbeeGetAddress \n\t\t Example: zigbeeGetAddress",
+        "Description": "gives addrss of zigbee devices "
+    },
+    "zigbeeNodes": {
+        "Usage": "zigbeeNodes \n\t\t Example: zigbeeNodes",
+        "Description": "return node of zigbee devices"
+    },
+    "zigbeePingDevices": {
+        "Usage": "zigbeePingDevices \n\t\t Example: zigbeePingDevices",
+        "Description": "ping all the zigbee device connected to the relay"
+    },
+    "zigbeeLogLevel": {
+        "Usage": "zigbeeLogLevel {log value} \n\t\t Example: zigbeeLogLevel 2",
+        "Description": "return log level of zigbee device"
+    },
+    "enoceanStartPairing": {
+        "Usage": "enoceanStartPairing \n\t\t Example enoceanStartPairing",
+        "Description": "add a enocean device"
+    },
+    "enoceanRemoveDevice": {
+        "Usage": "enoceanRemoveDevice \n\t\t Example: enoceanRemoveDevice",
+        "Description": "remove a enocean device"
+    },
+    "enoceanLogLevel": {
+        "Usage": "enoceanLogLevel {log value from 1 to 5} \n\t\t Example: enoceanLogLevel 2",
+        "Description": "return log level of enocean device"
+    },
+    "enoceanConfig": {
+        "Usage": "enoceanConfig \n\t\t Example: enoceanConfig",
+        "Description": "return configuration of enocean"
+    },
+    "enoceanGetBase": {
+        "Usage": "enoceanGetBase \n\t\t Example: enoceanGetBase",
+        "Description": "return bas of enocean device"
+    },
+    "enoceanGetVersion": {
+        "Usage": "enoceanGetVersion \n\t\t Example: enoceanGetVersion",
+        "Description": "return the version of enocean"
+    },
+    "removeRelayFromAccount": {
+        "Usage": "removeRelayFromAccount {relayID} {pairingcode{optional}} \n\t\t Example: removeRelayFromAccount WLDR0000 WICJ2KYMTNCMTF760E6Z2GPXS",
+        "Description": "removes a relay from account"
+    },
+    "debug": {
+        "Usage": "debug {on/off} \n\t\t Example:debug on",
+        "Description": "Turn debug output on or off"
+    },
+    "info": {
+        "Usage": "info \n\t\t Example: info",
+        "Description": "gives the info of current account"
+    },
+    "metrics": {
+        "Usage": "metrics {on/off} \n\t\t Example: metrics on",
+        "Description": "Turns on output showing performance of API calls."
+    },
+    "login": {
+        "Usage": "login {user} {password} \n\t\t Example: login ygoyal+wwdev1@wigwag.com passXYZ",
+        "Description": "login as other user"
+    },
+    "histrory": {
+        "Usage": "history \n\t\t Example: history",
+        "Description": "return all command histroy"
+    },
+    "shell": {
+        "Usage": "node index.js -c [cloud] -u [userId] -p [password] -a [account Id] -s [siteId] shell",
+        "Description":"enable shell to run command"
+    },
+    "version": {
+        "Usage": "version",
+        "Description": "print version of etool"
+    },
+    "exit": {
+        "Usage": "exit",
+        "Description": "exit from etool"
+    },
+    "modbusDeleteDevice": {
+        "Usage": "modbusDeleteDevice {modbusdeviceID}",
+        "Description": "delete a modbus device"
+    },
+    "modbusResetUSB": {
+        "Usage": "modbusResetUSB \n\t\t Example: modbusResetUSB",
+        "Description": "reset modbus USB"
+    },
+    "resetImod6": {
+        "Usage": "resetImod6 \n\t\t Example: resetImod6",
+        "Description": "reset Imod6 device"
+    },
+    "programImod6": {
+        "Usage": "programImod6 {hex file path} \n\t\t Example: programImod6 /location of hex file.txt",
+        "Description": "Program Imod6 device"
+    },
+    "executeBash": {
+        "Usage": "executeBash {location for relay state} \n\t\t Example: executeBash '/etc/init.d/devjssupport start'",
+        "Description": "fix relay connection"
+    },
+    "createsitesWithNames": {
+        "Usage": "",
+        "Description": ""
+    },
+    "deletesitesWithNames": {
+        "Usage": "",
+        "Description": ""
+    },
+    "siteMap": {
+        "Usage":"siteMap \n\t\t siteMap",
+        "Description": "list all the sites with there status and group"
+    },
+    "getSiteInfo": {
+        "Usage": "getSiteInfo \n\t\t Example: getSiteInfo",
+        "Description": "Returns all info of current site"
+    },
+    "siteName": {
+        "Usage": "siteName \n\t\t Example: siteName",
+        "Description": "name the current site"
+    },
+    "renameSite": {
+        "Usage": "renameSite [site name to be given] \n\t\t Example: renameSite store-XYZ ",
+        "Description": "rename the current site"
+    },
+    "renameAccount": {
+        "Usage": "Usage: renameAccount {Name} {accountID}\n\t\t Example: renameAccount 'Super Manager' 556565656566",
+        "Description": "rename account"
+    },
+    "getRelay": {
+        "Usage":  "getRelay {relayID} \n\t\t getRelay WWRL000000X",
+        "Description": "return relay of given ID"
+    },
+    "modbusListResourcesInCloud": {
+        "Usage": "modbusListResourcesInCloud \n\t\t Example: modbusListResourcesInCloud",
+        "Description": "List all modbus resources in cloud"
+    },
+    "bacnetListResourcesInCloud": {
+        "Usage": "bacnetListResourcesInCloud \n\t\t Example: bacnetListResourcesInCloud",
+        "Description": "List all bacnet resources in cloud"
+    },
+    "6lowpanListResourcesInCloud": {
+        "Usage": "6lowpanListResourcesInCloud \n\t\t 6lowpanListResourcesInCloud",
+        "Description": "List all 6lowpan resources in cloud"
+    },
+    "zigbeeListResourcesInCloud": {
+        "Usage": "zigbeeListResourcesInCloud \n\t\t zigbeeListResourcesInCloud",
+        "Description": "List all zigbee resources in cloud"
+    },
+    "zwaveListResourcesInCloud": {
+        "Usage": "zwaveListResourcesInCloud \n\t\t zwaveListResourcesInCloud",
+        "Description": "List all zwave resources in cloud"
+    },
+    "enoceanListResourcesInCloud": {
+        "Usage": "enoceanListResourcesInCloud \n\t\t enoceanListResourcesInCloud",
+        "Description": "List all enocean resources in cloud"
+    },
+    "updateDevStateManagerForDevice": {
+        "Usage": "",
+        "Description": ""
+    },
+    "deleteSchedulesAll": {
+        "Usage": "deleteSchedulesAll \n\t\t Example: deleteSchedulesAll",
+        "Description": "delete all the schedules"
+    },
+    "VirtualDeviceLogLevel": {
+        "Usage": "VirtualDeviceLogLevel [log value] \n\t\t Example: VirtualDeviceLogLevel 2",
+        "Description": "command will generate periodic events for all the registered Virtual Devices"
+    },
+    "bacnetNativeLogLevel": {
+        "Usage": "bacnetNativeLogLevel \n\t\t bacnetNativeLogLevel",
+        "Description": "command will generate periodic events for bacnet device"
+    },
+    "bacnetStartPortal": {
+        "Usage": "bacnetStartPortal \n\t\t bacnetStartPortal",
+        "Description": "restart the bacnet device wnad start portal"
+    },
+    "saveDevState": {
+        "Usage": "",
+        "Description": ""
+    },
+    "getUserAccessRules": {
+        "Usage": "",
+        "Description": ""
+    },
+    "getaUserAccessRule": {
+        "Usage": "",
+        "Description": ""
+    },
+    "deleteUserAccessRule": {
+        "Usage": "",
+        "Description": ""
+    },
+    "createRelayConfig": {
+        "Usage": "createRelayConfig [configuration in json]",
+        "Description": "Create a relay configuration"
+    },
+    "applyRelayConfig": {
+        "Usage": "applyRelayConfig [name] [relayID] [configID] [params]",
+        "Description": "Apply a relay configuration"
+    },
+    "listRelayConfigs": {
+        "Usage": "listRelayConfigs \n\t\t Example: listRelayConfigs",
+        "Description": "List all the relay configs"
+    },
+    "getRelayTask": {
+        "Usage": "getRelayTask [task Id] \n\t\t Example: getRelayTask fbewiufvliewhfv",
+        "Description": "Returns a task with the given task ID"
+    },
+    "importRelay": {
+        "Usage": "importRelay [relayID] [pairingcode] \n\t\t Example: importRelay WWRL000000X fgewigfvbeifbcki",
+        "Description": "Import a relay in account to pair"
+    },
+    "importRelays": {
+        "Usage": "importRelays [location of csv file] \n\t\t Example: importRelays /location of file.csv",
+        "Description": "Import a betch of relay from a .csv file"
+    },
+    "updateRelay": {
+        "Usage": "updateRelay [relayID] [latitude] [longitude] \n\t\t Example: updateRelay WWRL000000X 78 23",
+        "Description": "Updates coordinates of a relay"
+    },
+    "bindRelayToExistingSite": {
+        "Usage": "bindRelayToExistingSite \n\t\t Example: bindRelayToExistingSite",
+        "Description": "Bind a relay to an existing site"
+    },
+    "bindRelayToSite": {
+        "Usage": "bindRelayToSite \n\t\t Example: bindRelayToSite",
+        "Description": "bind a relay to a new site"
+    },
+    "subscribeToEvents": {
+        "Usage": "subscribeToEvents \n\t\t Example: subscribeToEvents",
+        "Description": "Create a websocket to show all the events"
+    },
+    "getAlerts": {
+        "Usage": "getAlerts [limit(optional)] [order (optional)] [beforeTime(optional)] \n\t\t Example: getAlerts 50 desc 1526154157891",
+        "Description": "Returns all the Alerts to the site"
+    },
+    "getAnAlert": {
+        "Usage": "getAnAlert [relayID] [Alert Serial Number] \n\t\t Example: getAnAlert WWRL000000X fygerfg98437tr43c39g",
+        "Description": "Return an alert with the given serila number"
+    },
+    "dismissAlert": {
+        "Usage": "dismissAlert [relayID] [Alert Serial Number] \n\t\t Example: dismissAlert WWRL000000X fygerfg98437tr43c39g",
+        "Description": "Delete an alert"
+    },
+    "getDeviceLogs": {
+        "Usage": "getDeviceLogs [relayID] [deviceID] [state] [limit] [sort] \n\t\t Example: getDeviceLogs WDRL00000P VirtualLightBulb61 state-power 4 desc",
+        "Description": "to get the logs of a device"
+    },
+    "getBleScanResults": {
+        "Usage": "",
+        "Description": ""
+    },
+    "bleStartScan": {
+        "Usage": "",
+        "Description": ""
+    },
+    "bleStopScan": {
+        "Usage": "",
+        "Description": ""
+    }
+}

@@ -1,0 +1,49 @@
+{
+  "name": "enterprise-tools",
+  "version": "1.0.0",
+  "description": "enterprise script tools",
+  "main": "api.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WigWagCo/enterprise-tools.git"
+  },
+  "author": "Ed Hemphill <npm@wigwag.com> (http://www.wigwag.com/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WigWagCo/enterprise-tools/issues"
+  },
+  "homepage": "https://github.com/WigWagCo/enterprise-tools#readme",
+  "bin": {
+    "dcs-tools": "./index.js"
+  },
+  "dependencies": {
+    "@slack/client": "^3.14.1",
+    "bonjour": "^3.5.0",
+    "chalk": "^2.1.0",
+    "classes": "^0.3.0",
+    "cnn-news": "^1.0.1",
+    "colors": "^1.3.2",
+    "commander": "^2.11.0",
+    "confirm-dialog": "^0.1.2",
+    "confirmed": "^1.1.0",
+    "event": "^1.0.0",
+    "iplocation": "^5.0.1",
+    "json2csv": "^3.11.5",
+    "jsonminify": "^0.4.1",
+    "jsonwebtoken": "^7.4.2",
+    "line-reader": "^0.4.0",
+    "node-wget": "^0.4.2",
+    "prompt-confirm": "^1.2.0",
+    "public-ip": "^2.4.0",
+    "readline-sync": "^1.4.7",
+    "request": "^2.81.0",
+    "tap-event": "^1.0.0",
+    "ws": "^3.2.0"
+  },
+  "devDependencies": {
+    "mocha": "^5.0.0"
+  }
+}

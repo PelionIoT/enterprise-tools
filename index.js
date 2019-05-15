@@ -34,6 +34,7 @@ const Logger = require('./utils/logger');
 const bonjour = require('bonjour')();
 const logger = new Logger( {moduleName: 'main', color: 'bgBlue'} );
 global.etoolsLogLevel = 2;
+const json2md = require("json2md")
 // logger.info("enterprise-tools started successfully...");
 //var jsonContent = JSON.parse(helpTest);
 
@@ -75,6 +76,8 @@ var loginfo = function() {
         console.log(util.format.apply(util, arguments));
     }
 }
+
+
 
 // console.log = function() {
 //     process.stdout.write(arguments[0]);
@@ -442,7 +445,7 @@ if (!program.args || !program.args[0]) {
     console.log("No command given.")
     process.exit(1)
 }
-var allCommands = 'help info debug metrics login set-accountid set-access-key '
+var allCommands = 'help info debug metrics login set-accountid set-access-key createmdfile '
 +'set-siteid set-siteid-as-accountid show-responses poller-status createSiteGroup getSiteGroup getAllSiteGroups deleteSiteGroup '
 +'subscribeToEvents led playtone findGateway locateGateway locate '
 +'createRole getRoles getaRole createGroup deleteaRole updateGroup getGroup deleteGroup '
@@ -877,6 +880,40 @@ var EnterNumber = function(){
     })
 }
 
+var createhelpmdfile = function() {
+    return new Promise(function(resolve, reject) {
+        var count
+        var obj = []
+        obj.push({h1:"Commands"})
+        var com = Object.keys(helpCommand);
+        var leng = Object.keys(helpCommand).length;
+        for (count=0;count<leng;count++) {
+          var a = helpCommand[com[count]];
+          var usage,description,example = ""
+          //if(helpCommand[com[count]].Usage)
+          usage = "Usage: "+ helpCommand[com[count]].Usage;
+          // if(helpCommand[com[count]].Example)
+          example = "Example: "+ helpCommand[com[count]].Example;
+          //if(helpCommand[com[count]].Description) 
+          description = "Description: "+ helpCommand[com[count]].Description;
+          var paragraph = usage +"\n"+example + "\n" +description + "\n";
+          obj.push({h2:com[count]});
+          obj.push ({p:paragraph})
+          if(count===leng-1) {
+              fs.writeFile('Help.md', json2md(obj),function(err) {
+                if(err) {
+                    reject(err);
+                } else {
+                    logger.info("Created Help.md file"); 
+                    resolve();    
+                }    
+              });      
+            } 
+        }    
+    })
+    
+}
+
 var s = 0;
 
 var doCLICommand = function(cmd) {
@@ -1210,14 +1247,20 @@ var doCLICommand = function(cmd) {
                                                 program.site = Object.keys(res)[0];
                                                 console.log("Found", Object.keys(res)[0], "This account has a single site.");
                                                 console.log("SiteID is set to  "+Object.keys(res)[0]);
-
+                                                if (!inShell)
+                                                    startShell();
+                                                resolve();
                                             } else {
                                                 console.log("Can't find a solitary site");
+                                                if (!inShell)
+                                                    startShell();
                                                 resolve();
                                             }
                                         }
                                     } else {
                                         console.log(chalk.bold("No site found! Please, run createSite cmd"));
+                                        if (!inShell)
+                                            startShell();
                                         resolve();
                                     } 
                                 })
@@ -1225,7 +1268,7 @@ var doCLICommand = function(cmd) {
 
                         }
                          else {
-                            startShell();
+                            startShell();    
                         }
                     }
                 } else {
@@ -6198,6 +6241,14 @@ var doCLICommand = function(cmd) {
                 });
                 break;
 
+                case "createmdfile":
+                    createhelpmdfile().then(function(){
+                        resolve();
+                    },function(err){
+                        console.log("Command failed to convert helpCommand.json to markdown file" + err);
+                        resolve();
+                    });
+                break;
 
 
 

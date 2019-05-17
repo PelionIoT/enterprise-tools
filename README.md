@@ -67,7 +67,7 @@ Replace `USER` with the user which has appropriate permissions to the account (h
 
 Most commands typically require a combination of these switches:
 
-    -c [CLOUD URL]
+    -c [CLOUD URL] (Run `info` command on Gateway prompt to get the cloud URL
     -u [USER EMAIL]
     -p [PASSWORD]
     -a [ACCOUNT ID]
@@ -94,7 +94,7 @@ The easiest way to see what the `dcs-tools` can do is to enter the command shell
 
 Do this by using the `shell` command.
 
-    dcs-tools -c https://somecloud.wigwag.io -u USER -p PASS -a acdefgh12312121211221211 shell
+    dcs-tools -c https://somecloud.wigwag.io -u USER -p PASS -a acdefgh1231212121122121? shell
 
 All other commands stated here can be entered in the shell, or can be ran as your `[COMMAND]` when your run `dcs-tools`
 

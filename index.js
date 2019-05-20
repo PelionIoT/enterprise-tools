@@ -1251,7 +1251,7 @@ var doCLICommand = function(cmd) {
                                                     startShell();
                                                 resolve();
                                             } else {
-                                                console.log("Can't find a solitary site");
+                                                // console.log("Can't find a solitary site");
                                                 if (!inShell)
                                                     startShell();
                                                 resolve();
@@ -2478,11 +2478,15 @@ var doCLICommand = function(cmd) {
                                 console.log('-----------------------------------------------------------------------------------------------------------------------');
                                 // console.log(result);
                                 result.forEach(function(relay) {
-                                    console.log(relay.id + ' | ' + (relay.siteID ? relay.siteID : 'null \t\t\t\t ') + ' | ' + relay.devicejsConnected + '\t\t| ' + (relay.siteID ? siteresult[relay.siteID].name : 'null'));
-                                    delete siteresult[relay.siteID];
+                                    try { 
+                                        console.log(relay.id + ' | ' + (relay.siteID ? relay.siteID : 'null \t\t\t\t ') + ' | ' + relay.devicejsConnected + '\t\t| ' + (relay.siteID ? (siteresult[relay.siteID] ? siteresult[relay.siteID].name : 'null') : 'null'));
+                                        delete siteresult[relay.siteID];
+                                    } catch(err) {
+                                        console.log(siteresult[relay.siteID]);
+                                    }
                                 });
                                 Object.keys(siteresult).forEach(function(id) {
-                                console.log('----------------------------------------- | ' + id + ' | ------------------- | ' + siteresult[id].name);
+                                console.log('-------------------------------- | ' + id + ' | ----------------- | ' + siteresult[id].name);
                                 });
                                 console.log('-----------------------------------------------------------------------------------------------------------------------');
 

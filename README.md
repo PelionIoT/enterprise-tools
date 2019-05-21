@@ -11,6 +11,10 @@ For a variety of reasons WigWag does not recommend installing `npm` modules glob
     mkdir tools
     npm install git+https://githubusername:githubpass@github.com/armPelionEdge/enterprise-tools.git
 
+If you have checked out the project with `git clone`, run:
+    
+    npm install . 
+
 You can user any directory name you like vs. `tools`
 
 From the directory you ran this in, you may run `dcs-tools` by (it will print out a help message):
@@ -48,6 +52,7 @@ If you really want to...
 If you have checked out the project, run: 
 
     npm install -g . 
+    
 from inside the project directory this will install `dcs-tools` command globally.
 
 ### Fast Start
@@ -63,14 +68,16 @@ Replace `USER` with the user which has appropriate permissions to the account (h
 
 #### Login credentials
 
-    dcs-tools -c https://somecloud.wigwag.io -u USER -p PASS -a acdefgh12312121211221211 [COMMAND]
+    dcs-tools -c https://api-gateway-url.net> -u USER -p PASS -a acdefgh12312121211221211 [COMMAND]
+    dcs-tools -c https://<api-gateway-url.net> -k api_key [COMMAND]
 
 Most commands typically require a combination of these switches:
 
-    -c [CLOUD URL] (Run `info` command on Gateway prompt to get the cloud URL
+    -c [CLOUD URL]
     -u [USER EMAIL]
     -p [PASSWORD]
     -a [ACCOUNT ID]
+    -k [API Key]
     
 If you run the tool with the `--admin` (or `-A`), and use credentials for the *super user* cloud account, you do not have to provide an `[ACCOUNT ID]`  If you do not provide a password, and one is needed, `dcs-tools` will prompt for one. This prompting can be disabled, as with all interactive input, using the `--muted` option. 
 

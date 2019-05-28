@@ -338,6 +338,11 @@ Commands:
     {bold startUpdateCampaign}
        Start an update campain to upgrade the gateway firmware.
 
+    {bold getCampaign}
+       Start an update campain to upgrade the gateway firmware.
+
+    {bold listCampaignDeviceStates}
+       Start an update campain to upgrade the gateway firmware.
 
     QUERYSTRING
        A string with the format 'FIELD=VALUE' where VALUE is the search value to look for which equals the field named FIELD
@@ -493,7 +498,7 @@ var allCommands = 'help info debug metrics login set-accountid set-access-key cr
 +'bleStartScan bleStopScan getBleScanResults getBleConnectedDevice bleConnect bleDisconnect '
 +'listFirmwareImages addFirmwareImage '
 +'listFirmwareManifests '
-+'startUpdateCampaign ';
++'startUpdateCampaign getCampaign listCampaignDeviceStates ';
 
 
 var myCompleter = function(line, callback) {
@@ -6454,6 +6459,62 @@ var doCLICommand = function(cmd) {
                                 console.log('\nreply either yes or no')
                                 resolve()
                             }
+                        })
+                    }
+                break;
+
+                case "getCampaign":
+                    if(program.cloud.indexOf('mbed') < 0) {
+                        exitWithError("Command only runs in mbed clouds")
+                        resolve()
+                    } else if(!program.access_key) {
+                        exitWithError("Command requires access key. Run set-access-key first.")
+                        resolve()
+                    } else {
+                        UpdateApi = new mbedCloudSDK.UpdateApi({
+                            host: program.cloud,
+                            apiKey: program.access_key
+                        });
+                        shell.question('Enter campaign id - ',(id) => {
+                            UpdateApi.getCampaign(id).then(campaign => {
+                                console.log(JSON.stringify(campaign, null, 4))
+                                resolve();
+                            }, error => {
+                                console.log("getCampaign failed - ", error);
+                                resolve()
+                            })
+                        })
+                    }
+                break;
+
+                case "listCampaignDeviceStates":
+                    if(program.cloud.indexOf('mbed') < 0) {
+                        exitWithError("Command only runs in mbed clouds")
+                        resolve()
+                    } else if(!program.access_key) {
+                        exitWithError("Command requires access key. Run set-access-key first.")
+                        resolve()
+                    } else {
+                        UpdateApi = new mbedCloudSDK.UpdateApi({
+                            host: program.cloud,
+                            apiKey: program.access_key
+                        });
+                        shell.question('Enter campaign id - ',(id) => {
+                            UpdateApi.listCampaignDeviceStates(id).then(deviceStates => { console.log(JSON.stringify(deviceStates, null, 4))
+                                console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+                                console.log('SNo | DeviceID                               | Name                              | State');
+                                console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+                                var count = 0;
+                                deviceStates.data.forEach(function(deviceState) {
+                                    count++;
+                                    console.log(' ' + count + (count>9?'':' ') + ' | ' + deviceState.deviceId + ' | ' + deviceState.name + ' | ' + deviceState.state);
+                                });
+                                console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+                                resolve();
+                            }, error => {
+                                console.log("listCampaignDeviceStates failed - ", error);
+                                resolve();
+                            });
                         })
                     }
                 break;

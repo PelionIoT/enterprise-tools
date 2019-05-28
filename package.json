@@ -36,6 +36,7 @@
     "jsonminify": "^0.4.1",
     "jsonwebtoken": "^7.4.2",
     "line-reader": "^0.4.0",
+    "mbed-cloud-sdk": "^2.2.0",
     "node-wget": "^0.4.2",
     "prompt-confirm": "^1.2.0",
     "public-ip": "^2.4.0",

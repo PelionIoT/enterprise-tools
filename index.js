@@ -335,6 +335,10 @@ Commands:
     {bold listFirmwareManifests}
        Start an update campain to upgrade the gateway firmware.
 
+    {bold startUpdateCampaign}
+       Start an update campain to upgrade the gateway firmware.
+
+
     QUERYSTRING
        A string with the format 'FIELD=VALUE' where VALUE is the search value to look for which equals the field named FIELD
 `
@@ -488,7 +492,8 @@ var allCommands = 'help info debug metrics login set-accountid set-access-key cr
 +'getAlerts getAnAlert dismissAlert getCameraIP '
 +'bleStartScan bleStopScan getBleScanResults getBleConnectedDevice bleConnect bleDisconnect '
 +'listFirmwareImages addFirmwareImage '
-+'listFirmwareManifests ';
++'listFirmwareManifests '
++'startUpdateCampaign ';
 
 
 var myCompleter = function(line, callback) {
@@ -6370,6 +6375,85 @@ var doCLICommand = function(cmd) {
                         }, error => {
                             logerr("listFirmwareManifests failed - ", error.details.message);
                             resolve();
+                        })
+                    }
+                break;
+
+                case "startUpdateCampaign":
+                    if(program.cloud.indexOf('mbed') < 0) {
+                        exitWithError("Command only runs in mbed clouds")
+                        resolve()
+                    } else if(!program.access_key) {
+                        exitWithError("Command requires access key. Run set-access-key first.")
+                        resolve()
+                    } else if(!program.site){
+                        exitWithError("SiteID null. Set SiteID first");
+                        resolve();
+                    } else {
+                        shell.question('Are you sure you want to upgrade this site (yes/no) ?', (answer) =>{
+                            if(answer == 'yes'){
+                                UpdateApi = new mbedCloudSDK.UpdateApi({
+                                    host: program.cloud,
+                                    apiKey: program.access_key
+                                });
+                                UpdateApi.listFirmwareManifests().then(manifests => {
+                                    console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+                                    console.log('SNo | ID                               | Created At                              | Device Class                         | Name');
+                                    console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+                                    var count = 0;
+                                    manifests.data.forEach(function(manifest) {
+                                        count++;
+                                        console.log(' ' + count + (count>9?'':' ') + ' | ' + manifest.id + ' | ' + manifest.createdAt + ' | ' + manifest.deviceClass + ' | ' + manifest.name);
+                                    });
+                                    console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+                                    shell.question('Make sure the manifest is uploaded, or run addFirmwareManifest first.\nSelect the manifest - ',(manifest_index) => {
+                                        if(manifest_index < 1 || manifest_index > count) {
+                                            exitWithError("Invalid index");
+                                            resolve();
+                                        } else {
+                                            shell.question('Enter the campaign name - ',(campaignName) => {
+                                                if(campaignName.length > 0) {
+                                                    shell.question('Enter the description - ',(description) => {
+                                                        UpdateApi.addCampaign({
+                                                            name: campaignName,
+                                                            description: description,
+                                                            deviceFilter: {
+                                                                alias: { $eq: program.site }
+                                                            },
+                                                            manifestId: manifests.data[manifest_index - 1].id
+                                                        }).then(campaign => {
+                                                            // Utilize campaign here
+                                                            console.log("Campaign data - "+JSON.stringify(campaign,null,4));
+                                                            UpdateApi.startCampaign(campaign.id).then(result => {
+                                                                console.log("Campaign started - "+JSON.stringify(result,null,4));
+                                                                resolve();
+                                                            }, error => {
+                                                                logerr("Start campaign failed - "+error.details.message)
+                                                                resolve()
+                                                            })
+                                                        }, error => {
+                                                            logerr("Create campaign failed - "+error.details.message)
+                                                            resolve()
+                                                        });
+                                                    })
+                                                } else {
+                                                    logerr("Campaign name cannot be null.")
+                                                    resolve()
+                                                }
+                                            })
+                                        }
+                                    })
+                                }, error => {
+                                    logerr("listFirmwareManifests failed - ", error.details.message);
+                                    resolve();
+                                })
+                            } else if (answer == 'no'){
+                                console.log('\nOoops! command executed by mistake')
+                                resolve()
+                            } else {
+                                console.log('\nreply either yes or no')
+                                resolve()
+                            }
                         })
                     }
                 break;

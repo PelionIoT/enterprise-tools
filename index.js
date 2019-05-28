@@ -332,6 +332,9 @@ Commands:
     {bold addFirmwareImage}
        Upload a gateway firmware.
 
+    {bold listFirmwareManifests}
+       Start an update campain to upgrade the gateway firmware.
+
     QUERYSTRING
        A string with the format 'FIELD=VALUE' where VALUE is the search value to look for which equals the field named FIELD
 `
@@ -484,7 +487,8 @@ var allCommands = 'help info debug metrics login set-accountid set-access-key cr
 +'bindRelayToSite bindRelayToExistingSite '
 +'getAlerts getAnAlert dismissAlert getCameraIP '
 +'bleStartScan bleStopScan getBleScanResults getBleConnectedDevice bleConnect bleDisconnect '
-+'listFirmwareImages addFirmwareImage ';
++'listFirmwareImages addFirmwareImage '
++'listFirmwareManifests ';
 
 
 var myCompleter = function(line, callback) {
@@ -6335,6 +6339,37 @@ var doCLICommand = function(cmd) {
                                 else logerr("No such file exists.")
                                 resolve();
                             }
+                        })
+                    }
+                break;
+
+                case "listFirmwareManifests":
+                    if(program.cloud.indexOf('mbed') < 0) {
+                        exitWithError("Command only runs in mbed clouds")
+                        resolve()
+                    } else  if(!program.access_key) {
+                        exitWithError("Command requires access key. Run set-access-key first.")
+                        resolve();
+                    } else {
+                        UpdateApi = new mbedCloudSDK.UpdateApi({
+                            host: program.cloud,
+                            apiKey: program.access_key
+                        });
+
+                        UpdateApi.listFirmwareManifests().then(manifests => {
+                            console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+                            console.log('SNo | ID                               | Created At                              | Device Class                         | Name');
+                            console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+                            var count = 0;
+                            manifests.data.forEach(function(manifest) {
+                                count++;
+                                console.log(' ' + count + (count>9?'':' ') + ' | ' + manifest.id + ' | ' + manifest.createdAt + ' | ' + manifest.deviceClass + ' | ' + manifest.name);
+                            });
+                            console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+                            resolve();
+                        }, error => {
+                            logerr("listFirmwareManifests failed - ", error.details.message);
+                            resolve();
                         })
                     }
                 break;

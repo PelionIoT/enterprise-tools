@@ -6282,13 +6282,13 @@ var doCLICommand = function(cmd) {
                     if(program.cloud.indexOf('mbed') < 0) {
                         exitWithError("Command only runs in mbed clouds")
                         resolve()
-                    } else  if(!program.access_key) {
+                    } else  if(!access.access_token) {
                         exitWithError("Command requires access key. Run set-access-key first.")
                         resolve()
                     } else {
                         UpdateApi = new mbedCloudSDK.UpdateApi({
                             host: program.cloud,
-                            apiKey: program.access_key
+                            apiKey: access.access_token
                         });
 
                         UpdateApi.listFirmwareImages().then(images => {
@@ -6313,13 +6313,13 @@ var doCLICommand = function(cmd) {
                     if(program.cloud.indexOf('mbed') < 0) {
                         exitWithError("Command only runs in mbed clouds")
                         resolve()
-                    } else  if(!program.access_key) {
+                    } else  if(!access.access_token) {
                         exitWithError("Command requires access key. Run set-access-key first.")
                         resolve()
                     } else {
                         UpdateApi = new mbedCloudSDK.UpdateApi({
                             host: program.cloud,
-                            apiKey: program.access_key
+                            apiKey: access.access_token
                         });
 
                         shell.question('Enter the fw image path - ',(fw_path) => {
@@ -6357,13 +6357,13 @@ var doCLICommand = function(cmd) {
                     if(program.cloud.indexOf('mbed') < 0) {
                         exitWithError("Command only runs in mbed clouds")
                         resolve()
-                    } else  if(!program.access_key) {
+                    } else  if(!access.access_token) {
                         exitWithError("Command requires access key. Run set-access-key first.")
                         resolve();
                     } else {
                         UpdateApi = new mbedCloudSDK.UpdateApi({
                             host: program.cloud,
-                            apiKey: program.access_key
+                            apiKey: access.access_token
                         });
 
                         UpdateApi.listFirmwareManifests().then(manifests => {
@@ -6388,7 +6388,7 @@ var doCLICommand = function(cmd) {
                     if(program.cloud.indexOf('mbed') < 0) {
                         exitWithError("Command only runs in mbed clouds")
                         resolve()
-                    } else if(!program.access_key) {
+                    } else if(!access.access_token) {
                         exitWithError("Command requires access key. Run set-access-key first.")
                         resolve()
                     } else if(!program.site){
@@ -6399,7 +6399,7 @@ var doCLICommand = function(cmd) {
                             if(answer == 'yes'){
                                 UpdateApi = new mbedCloudSDK.UpdateApi({
                                     host: program.cloud,
-                                    apiKey: program.access_key
+                                    apiKey: access.access_token
                                 });
                                 UpdateApi.listFirmwareManifests().then(manifests => {
                                     console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
@@ -6467,13 +6467,13 @@ var doCLICommand = function(cmd) {
                     if(program.cloud.indexOf('mbed') < 0) {
                         exitWithError("Command only runs in mbed clouds")
                         resolve()
-                    } else if(!program.access_key) {
+                    } else if(!access.access_token) {
                         exitWithError("Command requires access key. Run set-access-key first.")
                         resolve()
                     } else {
                         UpdateApi = new mbedCloudSDK.UpdateApi({
                             host: program.cloud,
-                            apiKey: program.access_key
+                            apiKey: access.access_token
                         });
                         shell.question('Enter campaign id - ',(id) => {
                             UpdateApi.getCampaign(id).then(campaign => {
@@ -6491,13 +6491,13 @@ var doCLICommand = function(cmd) {
                     if(program.cloud.indexOf('mbed') < 0) {
                         exitWithError("Command only runs in mbed clouds")
                         resolve()
-                    } else if(!program.access_key) {
+                    } else if(!access.access_token) {
                         exitWithError("Command requires access key. Run set-access-key first.")
                         resolve()
                     } else {
                         UpdateApi = new mbedCloudSDK.UpdateApi({
                             host: program.cloud,
-                            apiKey: program.access_key
+                            apiKey: access.access_token
                         });
                         shell.question('Enter campaign id - ',(id) => {
                             UpdateApi.listCampaignDeviceStates(id).then(deviceStates => { console.log(JSON.stringify(deviceStates, null, 4))

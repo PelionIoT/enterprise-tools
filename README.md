@@ -63,6 +63,11 @@ To start the shell, do something like this
 
 Replace `USER` with the user which has appropriate permissions to the account (here account is `abdefghi123...`)
 
+### For firmware upgrade and manifest commands to work
+
+For use of commands to manage device firmware and upgrade it: 
+
+    ./install.sh
 
 ## Commands
 

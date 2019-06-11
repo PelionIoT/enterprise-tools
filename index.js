@@ -45,10 +45,6 @@ var lineReader = require('line-reader');
 var DCS = require('./api.js');
 const readline = require('readline');
 
-// mbed-cloud-sdk to perform upgrades
-const mbedCloudSDK = require('mbed-cloud-sdk');
-var exec = require('child_process').execFile;
-
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -334,19 +330,22 @@ Commands:
        Upload a gateway firmware.
 
     {bold listFirmwareManifests}
-       Start an update campain to upgrade the gateway firmware.
+       List all uploaded firmware manifests.
+
+    {bold createFirmwareManifest}
+       Generate new firmware manifest and upload it to cloud.
 
     {bold addFirmwareManifest}
-       Start an update campain to upgrade the gateway firmware.
+       Upload a firmware manifest.
 
     {bold startUpdateCampaign}
        Start an update campain to upgrade the gateway firmware.
 
-    {bold getCampaign}
-       Start an update campain to upgrade the gateway firmware.
+    {bold getCampaign} [campaign_id]
+       Get details of an existing update campain.
 
-    {bold listCampaignDeviceStates}
-       Start an update campain to upgrade the gateway firmware.
+    {bold listCampaignDeviceStates} [campaign_id]
+       List current state of all devices in the update campaign.
 
     QUERYSTRING
        A string with the format 'FIELD=VALUE' where VALUE is the search value to look for which equals the field named FIELD
@@ -501,7 +500,7 @@ var allCommands = 'help info debug metrics login set-accountid set-access-key cr
 +'getAlerts getAnAlert dismissAlert getCameraIP '
 +'bleStartScan bleStopScan getBleScanResults getBleConnectedDevice bleConnect bleDisconnect '
 +'listFirmwareImages addFirmwareImage '
-+'listFirmwareManifests addFirmwareManifest '
++'listFirmwareManifests createFirmwareManifest addFirmwareManifest '
 +'startUpdateCampaign getCampaign listCampaignDeviceStates ';
 
 
@@ -6290,13 +6289,7 @@ var doCLICommand = function(cmd) {
                         exitWithError("Command requires access key. Run set-access-key first.")
                         resolve()
                     } else {
-                        UpdateApi = new mbedCloudSDK.UpdateApi({
-                            host: program.cloud,
-                            apiKey: access.access_token
-                        });
-
-                        UpdateApi.listFirmwareImages().then(images => {
-                            logdbg("listFirmwareImages response: "+JSON.stringify(images,null,4));
+                        DCS.listFirmwareImages().then(images => {
                             console.log('------------------------------------------------------------------------------------------------');
                             console.log('SNo | ID                               | Image Size   | Name');
                             console.log('------------------------------------------------------------------------------------------------');
@@ -6322,22 +6315,12 @@ var doCLICommand = function(cmd) {
                         exitWithError("Command requires access key. Run set-access-key first.")
                         resolve()
                     } else {
-                        UpdateApi = new mbedCloudSDK.UpdateApi({
-                            host: program.cloud,
-                            apiKey: access.access_token
-                        });
-
                         shell.question('Enter the fw image path - ',(fw_path) => {
                             if(fs.existsSync(fw_path)) {
                                 shell.question('Enter the fw image name - ',(fwName) => {
                                     if(fwName.length > 0) {
                                         shell.question('Enter the description - ',(description) => {
-                                            UpdateApi.addFirmwareImage({
-                                                name: fwName,
-                                                dataFile: fs.createReadStream(fw_path),
-                                                description: description
-                                            }).then(result => {
-                                                logdbg("addFirmwareImage response: "+JSON.stringify(result));
+                                            DCS.addFirmwareImage(fwName,fs.createReadStream(fw_path),description).then(result => {
                                                 console.log("Firmware uploaded successfully, response - "+JSON.stringify(result,null,4));
                                                 resolve();
                                             }, error => {
@@ -6367,22 +6350,16 @@ var doCLICommand = function(cmd) {
                         exitWithError("Command requires access key. Run set-access-key first.")
                         resolve();
                     } else {
-                        UpdateApi = new mbedCloudSDK.UpdateApi({
-                            host: program.cloud,
-                            apiKey: access.access_token
-                        });
-
-                        UpdateApi.listFirmwareManifests().then(manifests => {
-                            logdbg("listFirmwareManifests response: "+JSON.stringify(manifests,null,4));
-                            console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+                        DCS.listFirmwareManifests().then(manifests => {
+                            console.log('-----------------------------------------------------------------------------------------------------------------------------------------');
                             console.log('SNo | ID                               | Created At                              | Device Class                         | Name');
-                            console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+                            console.log('-----------------------------------------------------------------------------------------------------------------------------------------');
                             var count = 0;
                             manifests.data.forEach(function(manifest) {
                                 count++;
-                                console.log(' ' + count + (count>9?'':' ') + ' | ' + manifest.id + ' | ' + manifest.createdAt + ' | ' + manifest.deviceClass + ' | ' + manifest.name);
+                                console.log(' ' + count + (count>9?'':' ') + ' | ' + manifest.id + ' | ' + manifest.deviceClass + ' | ' + manifest.name);
                             });
-                            console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+                            console.log('----------------------------------------------------------------------------------------------------------------------------------------');
                             resolve();
                         }, error => {
                             logerr("listFirmwareManifests failed - ", error);
@@ -6391,113 +6368,125 @@ var doCLICommand = function(cmd) {
                     }
                 break;
 
-                case "addFirmwareManifest":
+                case "createFirmwareManifest":
                     if(program.cloud.indexOf('mbed') < 0) {
                         exitWithError("Command only runs in mbed clouds")
                         resolve();
-                    } else  if(!access.access_token) {
-                        exitWithError("Command requires access key. Run set-access-key first.")
-                        resolve();
-                    } else {
-                        UpdateApi = new mbedCloudSDK.UpdateApi({
-                            host: program.cloud,
-                            apiKey: access.access_token
+                        break;
+                    }
+                    DCS.listFirmwareImages().then(images => {
+                        logdbg("listFirmwareImages response: "+JSON.stringify(images,null,4));
+                        if(images.data.length == 0) {
+                            logerr("No firmware images exist. Run addFirmwareImage cmd.");
+                            resolve();
+                        } else {
+                        console.log('------------------------------------------------------------------------------------------------');
+                        console.log('SNo | ID                               | Image Size   | Name');
+                        console.log('------------------------------------------------------------------------------------------------');
+                        var count = 0;
+                        images.data.forEach(function(image) {
+                            count++;
+                            console.log(' ' + count + (count>9?'':' ') + ' | ' + image.id + ' | ' + image.datafileSize + ' '.repeat(12 - image.datafileSize.toString().length) + ' | ' + image.name);
                         });
-                        UpdateApi.listFirmwareImages().then(images => {
-                            logdbg("listFirmwareImages response: "+JSON.stringify(images,null,4));
-                            if(images.data.length == 0) {
-                                logerr("No firmware images exist. Run addFirmwareImage cmd.");
+                        console.log('------------------------------------------------------------------------------------------------');
+                        shell.question('Make sure the image is uploaded, or run addFirmwareImage first.\nSelect the firmware - ',(fw_index) => {
+                            fw_index = parseInt(fw_index);
+                            if(isNaN(fw_index) || fw_index < 1 || fw_index > count) {
+                                exitWithError("Invalid index");
                                 resolve();
                             } else {
-                            console.log('------------------------------------------------------------------------------------------------');
-                            console.log('SNo | ID                               | Image Size   | Name');
-                            console.log('------------------------------------------------------------------------------------------------');
-                            var count = 0;
-                            images.data.forEach(function(image) {
-                                count++;
-                                console.log(' ' + count + (count>9?'':' ') + ' | ' + image.id + ' | ' + image.datafileSize + ' '.repeat(12 - image.datafileSize.toString().length) + ' | ' + image.name);
-                            });
-                            console.log('------------------------------------------------------------------------------------------------');
-                            shell.question('Make sure the image is uploaded, or run addFirmwareImage first.\nSelect the firmware - ',(fw_index) => {
-                                fw_index = parseInt(fw_index);
-                                if(isNaN(fw_index) || fw_index < 1 || fw_index > count) {
-                                    exitWithError("Invalid index");
-                                    resolve();
-                                } else {
-                                    shell.question('Enter the local firmware path - ',(firmware) => {
-                                        if(fs.existsSync(firmware)) {
-		                                    shell.question('Enter the update certificate - ',(cert) => {
-		                                        if(fs.existsSync(cert)) {
-				                                    shell.question('Enter the certificate key - ',(key) => {
-				                                        if(fs.existsSync(key)) {
-				                                            shell.question('Enter the manifest name - ',(manifestName) => {
-				                                                if(manifestName.length > 0){
-				                                                    shell.question('Enter the description - ',(description) => {
-				                                                        fs.writeFileSync(manifestName+'.json', JSON.stringify({
-				                                                           "encryptionMode" : "none-ecc-secp256r1-sha256",
-				                                                            "vendorId" : "42fa7b481a6543aa890f8c704daade54",
-				                                                            "classId" : "c56f3a62b52b4ef695a0db7a6e3b5b21",
-				                                                            "payloadUri" : images.data[fw_index - 1].url,
-				                                                            "payloadFile": firmware,
-				                                                            "certificates": [
-				                                                                { "file" : cert }
-				                                                            ]
-				                                                        }, null, 4));
-
-				                                                        console.log("\nUsing manifest created "+manifestName+".json")
-				                                                        var cmd = ["create", "-i", manifestName+".json", "-o", "manifests/"+manifestName+".bin", "-k", key, "-p", firmware]
-				                                                        var child = exec("manifest-tool/bin/manifest-tool", cmd,(error,stdout,stderr)=>{
-				                                                            if(error) {
-				                                                                exitWithError("Error creating manifest - " + error)
-				                                                                resolve();
-				                                                            } else if (stderr) {
-				                                                                exitWithError("stderror creating manifests - " + stderr)
-				                                                                resolve();
-				                                                            } else {
-				                                                                if (stdout) console.log(stdout)
-				                                                                console.log("Manifest created - "+manifestName+".bin")
-				                                                                UpdateApi.addFirmwareManifest({
-				                                                                    name: manifestName,
-				                                                                    description: description,
-				                                                                    dataFile: fs.createReadStream("manifests/"+manifestName+".bin")
-				                                                                }).then(result => {
-                                                                                    logdbg("addFirmwareManifest response: "+JSON.stringify(result,null,4));
-				                                                                    console.log("Manifests uploaded successfully with id - "+result.id);
-				                                                                    resolve();
-				                                                                }, error => {
-                                                                                    logdbg("addFirmwareManifest error: "+error);
-				                                                                    console.log("addFirmwareManifest failed - (",error.details.code,") ", error.details.message);
-				                                                                    resolve();
-				                                                                })
-				                                                            }
-				                                                        })
-				                                                    })
-				                                                } else {
-				                                                    logerr("Manifest name cannot be null.")
-				                                                    resolve();
-				                                                }
-				                                            })
-				                                        } else {
-				                                            logerr("Certificate key not found.")
-				                                            resolve();
-				                                        }
-				                                    })
-		                                        } else {
-		                                            logerr("Certificate not found.")
-		                                            resolve();
-		                                        }
-		                                    })
-                                        } else {
-                                            logerr("No such file exists.")
-                                            resolve();
-                                        }
-                                    })
-                                }
-                            })
+                                shell.question('Enter the local firmware path - ',(firmware) => {
+                                    if(fs.existsSync(firmware)) {
+                                        shell.question('Enter the update certificate - ',(cert) => {
+                                            if(fs.existsSync(cert)) {
+                                                shell.question('Enter the certificate key - ',(key) => {
+                                                    if(fs.existsSync(key)) {
+                                                        shell.question('Enter the manifest name - ',(manifestName) => {
+                                                            if(manifestName.length > 0){
+                                                                shell.question('Enter the description - ',(description) => {
+                                                                    DCS.createFirmwareManifest(manifestName, images.data[fw_index - 1].url, firmware, cert, key, description).then(manifest => {
+                                                                        console.log("Manifest created - "+manifest);
+                                                                        shell.question('Would you like to upload this manifest (yes/no) ? - ',answer => {
+                                                                            if(answer == 'yes'){
+                                                                                DCS.addFirmwareManifest(manifestName, fs.createReadStream(manifest), description).then(result => {
+                                                                                    console.log("Manifest uploaded successfully with id - "+result.id);
+                                                                                    resolve();
+                                                                                }, error => {
+                                                                                    console.log("uploadFirmwareManifest failed - (",error.details.code,") ", error.details.message);
+                                                                                    resolve();
+                                                                                })
+                                                                            } else if (answer == 'no'){
+                                                                                resolve()
+                                                                            } else {
+                                                                                console.log('\nReply either yes or no. Run uploadFirmwareManifest to upload this manifest.')
+                                                                                resolve()
+                                                                            }
+                                                                        })
+                                                                    }, error => {
+                                                                        console.log(error);
+                                                                        resolve();
+                                                                    })
+                                                                })
+                                                            } else {
+                                                                logerr("Manifest name cannot be null.")
+                                                                resolve();
+                                                            }
+                                                        })
+                                                    } else {
+                                                        logerr("Certificate key not found.")
+                                                        resolve();
+                                                    }
+                                                })
+                                            } else {
+                                                logerr("Certificate not found.")
+                                                resolve();
+                                            }
+                                        })
+                                    } else {
+                                        logerr("No such file exists.")
+                                        resolve();
+                                    }
+                                })
                             }
-                        }, error => {
-                            console.log("listFirmwareImages failed - ", error.details.message);
-                            resolve();
+                        })
+                        }
+                    }, error => {
+                        console.log("listFirmwareImages failed - ", error.details.message);
+                        resolve();
+                    })
+                break;
+
+                case "addFirmwareManifest":
+                    if(program.cloud.indexOf('mbed') < 0) {
+                        exitWithError("Command only runs in mbed clouds")
+                        resolve()
+                    } else  if(!access.access_token) {
+                        exitWithError("Command requires access key. Run set-access-key first.")
+                        resolve()
+                    } else {
+                        shell.question('Enter the manifest bin file - ',(manifest) => {
+                            if(fs.existsSync(manifest)) {
+                                shell.question('Enter the manifest name - ',(manifestName) => {
+                                    if(manifestName.length > 0) {
+                                        shell.question('Enter the description - ',(description) => {
+                                            DCS.addFirmwareManifest(manifestName, fs.createReadStream(manifest), description).then(result => {
+                                                console.log("Manifest uploaded successfully, with id - "+result.id);
+                                                resolve();
+                                            }, error => {
+                                                logerr("addFirmwareManifest failed - ", error);
+                                                resolve();
+                                            })
+                                        })
+                                    } else {
+                                        logerr("Manifest name cant be null")
+                                        resolve();
+                                    }
+                                })
+                            } else {
+                                if(manifest == '') logerr("You have to enter file path.");
+                                else logerr("No such file exists.")
+                                resolve();
+                            }
                         })
                     }
                 break;
@@ -6515,24 +6504,20 @@ var doCLICommand = function(cmd) {
                     } else {
                         shell.question('Are you sure you want to upgrade this site (yes/no) ?', (answer) =>{
                             if(answer == 'yes'){
-                                UpdateApi = new mbedCloudSDK.UpdateApi({
-                                    host: program.cloud,
-                                    apiKey: access.access_token
-                                });
-                                UpdateApi.listFirmwareManifests().then(manifests => {
+                                DCS.listFirmwareManifests().then(manifests => {
                                     logdbg("listFirmwareManifests response: "+JSON.stringify(manifests,null,4));
                                     if(manifests.data.length == 0) {
                                         console.log("No manifests exist. Run addFirmwareManifest cmd.")
                                     } else {
                                     console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
-                                    console.log('SNo | ID                               | Created At                              | Device Class                         | Name');
-                                    console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+                                    console.log('SNo | ID                               | Device Class                         | Name');
+                                    console.log('-----------------------------------------------------------------------------------------------------------------------------------------');
                                     var count = 0;
                                     manifests.data.forEach(function(manifest) {
                                         count++;
-                                        console.log(' ' + count + (count>9?'':' ') + ' | ' + manifest.id + ' | ' + manifest.createdAt + ' | ' + manifest.deviceClass + ' | ' + manifest.name);
+                                        console.log(' ' + count + (count>9?'':' ') + ' | ' + manifest.id + ' | ' + manifest.deviceClass + ' | ' + manifest.name);
                                     });
-                                    console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+                                    console.log('-----------------------------------------------------------------------------------------------------------------------------------------');
                                     shell.question('Make sure the manifest is uploaded, or run addFirmwareManifest first.\nSelect the manifest - ',(manifest_index) => {
                                         manifest_index = parseInt(manifest_index);
                                         if(isNaN(manifest_index) || manifest_index < 1 || manifest_index > count) {
@@ -6542,19 +6527,9 @@ var doCLICommand = function(cmd) {
                                             shell.question('Enter the campaign name - ',(campaignName) => {
                                                 if(campaignName.length > 0) {
                                                     shell.question('Enter the description - ',(description) => {
-                                                        UpdateApi.addCampaign({
-                                                            name: campaignName,
-                                                            description: description,
-                                                            deviceFilter: {
-                                                                alias: { $eq: program.site }
-                                                            },
-                                                            manifestId: manifests.data[manifest_index - 1].id
-                                                        }).then(campaign => {
-                                                            logdbg("addCampaign response: "+JSON.stringify(campaign,null,4));
-                                                            console.log("Campaign data - "+JSON.stringify(campaign,null,4));
-                                                            UpdateApi.startCampaign(campaign.id).then(result => {
-                                                                logdbg("startCampaign response: "+JSON.stringify(result,null,4));
-                                                                console.log("Campaign started - "+JSON.stringify(result,null,4));
+                                                        DCS.addCampaign(campaignName, {alias:{$eq:program.site}}, manifests.data[manifest_index - 1].id, description).then(campaign => {
+                                                            DCS.startCampaign(campaign.id).then(result => {
+                                                                console.log("Campaign started with id - "+result.id+" , state - "+result.state+" , phase - "+result.phase);
                                                                 resolve();
                                                             }, error => {
                                                                 logerr("Start campaign failed - "+error)
@@ -6596,19 +6571,23 @@ var doCLICommand = function(cmd) {
                         exitWithError("Command requires access key. Run set-access-key first.")
                         resolve()
                     } else {
-                        UpdateApi = new mbedCloudSDK.UpdateApi({
-                            host: program.cloud,
-                            apiKey: access.access_token
-                        });
-                        shell.question('Enter campaign id - ',(id) => {
-                            UpdateApi.getCampaign(id).then(campaign => {
-                                console.log("Campaign data - "+JSON.stringify(campaign, null, 4))
-                                resolve();
+                        if(!cliArgz[1]) {
+                            exitWithError("Usage: getCampaign [campaign_id]");
+                            resolve();
+                        } else {
+                            DCS.getCampaign(cliArgz[1]).then(campaign => {
+                                if(campaign == null) {
+                                    logerr("No such campaign details found")
+                                    resolve()
+                                } else {
+                                    console.log("Campaign data - "+JSON.stringify(campaign, null, 4))
+                                    resolve();
+                                }
                             }, error => {
-                                console.log("getCampaign failed - ", error);
+                                logerr("getCampaign failed - ", error);
                                 resolve()
                             })
-                        })
+                        }
                     }
                 break;
 
@@ -6620,28 +6599,33 @@ var doCLICommand = function(cmd) {
                         exitWithError("Command requires access key. Run set-access-key first.")
                         resolve()
                     } else {
-                        UpdateApi = new mbedCloudSDK.UpdateApi({
-                            host: program.cloud,
-                            apiKey: access.access_token
-                        });
-                        shell.question('Enter campaign id - ',(id) => {
-                            UpdateApi.listCampaignDeviceStates(id).then(deviceStates => {
-                                logdbg("listCampaignDeviceStates response: "+JSON.stringify(deviceStates, null, 4))
-                                console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
-                                console.log('SNo | DeviceID                               | Name                              | State');
-                                console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
-                                var count = 0;
-                                deviceStates.data.forEach(function(deviceState) {
-                                    count++;
-                                    console.log(' ' + count + (count>9?'':' ') + ' | ' + deviceState.deviceId + ' | ' + deviceState.name + ' | ' + deviceState.state);
-                                });
-                                console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------');
-                                resolve();
-                            }, error => {
-                                console.log("listCampaignDeviceStates failed - ", error);
-                                resolve();
-                            });
-                        })
+                        if(!cliArgz[1]) {
+                            exitWithError("Usage: listCampaignDeviceStates [campaign_id]");
+                            resolve();
+                        } else {
+                            DCS.getCampaign(cliArgz[1]).then(campaign => {
+                                if(campaign == null) {
+                                    logerr("No such campaign details found")
+                                    resolve()
+                                } else {
+                                    DCS.listCampaignDeviceStates(cliArgz[1]).then(deviceStates => {
+                                        console.log('------------------------------------------------------------------------------------------------------------');
+                                        console.log('SNo | DeviceID                         | Name                             | State');
+                                        console.log('------------------------------------------------------------------------------------------------------------');
+                                        var count = 0;
+                                        deviceStates.data.forEach(function(deviceState) {
+                                            count++;
+                                            console.log(' ' + count + (count>9?'':' ') + ' | ' + deviceState.deviceId + ' | ' + deviceState.name + ' | ' + deviceState.state);
+                                        });
+                                        console.log('------------------------------------------------------------------------------------------------------------');
+                                        resolve();
+                                    }, error => {
+                                        logerr("listCampaignDeviceStates failed - ", error);
+                                        resolve();
+                                    });
+                                }
+                            })
+                        }
                     }
                 break;
 

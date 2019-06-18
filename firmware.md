@@ -6,7 +6,28 @@ For use of commands to manage device firmware and upgrade the gateways:
 
     ./install.sh
 
+### Upgrade a gateway endpoint using dcs
+
+For upgrading a device/gateway using dcs: 
+ - Upload the firmware image on the cloud -> [addFirmwareImage](#addFirmwareImage)
+ - Create a manifest bin and upload on the cloud -> [createFirmwareManifest](#createFirmwareManifest).
+ If you have a manifest bin and just need to upload it -> [addFirmwareManifest](#addFirmwareManifest)
+ - Run **set-siteid** and select the site to be updated.
+ - Create and start an update campaign -> [startUpdateCampaign](#startUpdateCampaign)
+ - Get campaign details and monitor the target device using -> [getCampaign](#getCampaign) and [listCampaignDeviceStates](#listCampaignDeviceStates)
+ - The campaign is successful when all devices reach a state **deployed**.
+
 ## Commands
+
+You may use the following commands:
+ - [listFirmwareImages](#listFirmwareImages) - Get all firmware images on the cloud.
+ - [addFirmwareImage](#addFirmwareImage) - Add/Upload a new firmware image to the cloud.
+ - [listFirmwareManifests](#listFirmwareManifests) - Get all firmware manifests on the cloud.
+ - [createFirmwareManifest](#createFirmwareManifest) - Create and optionally upload a new manifest bin to the cloud. A firmware image should be available locally as well as on cloud to create manifest. Also requires update cert and key to bind the manifest.
+ - [addFirmwareManifest](#addFirmwareManifest) - Upload an already created manifest bin to the cloud.
+ - [startUpdateCampaign](#startUpdateCampaign) - Create a new update campaign to upgrade the target site. Requires the manifest to be applied on the target device be already in the cloud (or run `createFirmwareManifest`/`addFirmwareManifest` first).
+ - [getCampaign](#getCampaign) - Get camppaign data and current status.
+ - [listCampaignDeviceStates](#listCampaignDeviceStates) - List the status of all devices under an update campaign.
 
 #### `listFirmwareImages`
 
@@ -49,7 +70,7 @@ Firmware uploaded successfully, response - {
     "updatedAt": "2019-06-18T07:47:57.764141Z"
 }
 ```
-Add/upload a new firmware image `diff-dev-3-to-4.tar.gz` with name `upgrade-rpi-dev-3-to-4` to the cloud. If the upload is successfull, it returns `image id` (here 016b698e8ac1000000000001001001a8) in response. 
+Add/upload a new firmware image `diff-dev-3-to-4.tar.gz` with name `upgrade-rpi-dev-3-to-4` to the cloud. If the upload is successfull, it returns **image id** (here 016b698e8ac1000000000001001001a8) in response. 
 
 #### `listFirmwareManifests`
 
@@ -97,7 +118,7 @@ Manifest created - manifests/manifest-rpi-dev-3-to-4.bin
 Would you like to upload this manifest (yes/no) ? - yes
 Manifest uploaded successfully with id - 016b699bda96000000000001001001dc
 ```
-Creates and upload a new firmware manifest `manifest-rpi-dev-3-to-4.bin` with name `manifest-rpi-dev-3-to-4` to the cloud. Requires the firmware image, update cert, key, manifest name and optional description. If the upload is successfull, it returns `manifest id` (here 016b699bda96000000000001001001dc) in response.
+Creates and upload a new firmware manifest `manifest-rpi-dev-3-to-4.bin` with name `manifest-rpi-dev-3-to-4` to the cloud. Requires the firmware image, update cert, key, manifest name and optional description. If the upload is successfull, it returns **manifest id** (here 016b699bda96000000000001001001dc) in response.
 
 #### `addFirmwareManifest`
 
@@ -112,7 +133,7 @@ Enter the manifest name - manifest-rpi-dev-3-to-4
 Enter the description - Demo manifest
 Manifest uploaded successfully, with id - 016b699bda96000000000001001001dc
 ```
-Upload a new firmware manifest bin `manifest-rpi-dev-3-to-4.bin` with name `manifest-rpi-dev-3-to-4` to the cloud. Requires the manifest bin, manifest name and optional description. If the upload is successfull, it returns `manifest id` (here 016b699bda96000000000001001001dc) in response.
+Upload a new firmware manifest bin `manifest-rpi-dev-3-to-4.bin` with name `manifest-rpi-dev-3-to-4` to the cloud. Requires the manifest bin, manifest name and optional description. If the upload is successfull, it returns **manifest id** (here 016b699bda96000000000001001001dc) in response.
 
 #### `startUpdateCampaign`
 
@@ -138,7 +159,7 @@ Enter the campaign name - Test-Campaign-1
 Enter the description - Demo update campaign
 Campaign started with id - 016b69cf36d100000000000100100147 , state - scheduled , phase - starting
 ```
-Create and start a new update campaign with name `Test-Campaign-1` to the cloud. Requires selecting an uploaded manifest to be applied, and an optional description. Applied update on the set site. If the campaign is started successfully, it returns `campaign id` (here 016b69cf36d100000000000100100147), `state`(scheduled/created/publishing/stopped) and `phase` in response.
+Create and start a new update campaign with name `Test-Campaign-1` to the cloud. Requires selecting an uploaded manifest to be applied, and an optional description. Applied update on the set site. If the campaign is started successfully, it returns **campaign id** (here 016b69cf36d100000000000100100147), **state**(scheduled/created/publishing/stopped) and **phase** in response.
 
 #### `getCampaign`
 Usage: getCampaign [campaign-id]
@@ -186,4 +207,4 @@ SNo | DeviceID                         | Name                             | Stat
 ```
 Lists the status of devices in an update campaign.
 
-`Note: The device is successfully upgraded if the state has reached deployed.`
+**Note: The device is successfully upgraded if the state has reached deployed.**

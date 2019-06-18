@@ -6352,7 +6352,7 @@ var doCLICommand = function(cmd) {
                     } else {
                         DCS.listFirmwareManifests().then(manifests => {
                             console.log('-----------------------------------------------------------------------------------------------------------------------------------------');
-                            console.log('SNo | ID                               | Created At                              | Device Class                         | Name');
+                            console.log('SNo | ID                               | Device Class                         | Name');
                             console.log('-----------------------------------------------------------------------------------------------------------------------------------------');
                             var count = 0;
                             manifests.data.forEach(function(manifest) {

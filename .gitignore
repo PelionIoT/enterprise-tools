@@ -60,3 +60,7 @@ typings/
 *-lock.json
 history.out
 scripts/ResourceGroupImages
+
+# manifest-tool and manifests
+manifest-tool/
+manifests/

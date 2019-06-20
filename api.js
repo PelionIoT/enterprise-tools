@@ -113,25 +113,48 @@ var initAPI = function(config, logfuncs) {
     } 
 }
 
-var getAuthWithPass = function(username, password, withAccountId) {
-    var self = this;
+var getAuthWithPass = function(username, password, withAccountId, s) {
+    var self = s || this;
     return new Promise(function(resolve,reject){
         self._loginWithPass(username, password, withAccountId).then(function(result) {
             self.logdbg('API: program:', self.program)
             self.logdbg("API: OK---", result);
-            // console.log(result);
-            self.access = result;
-            if(result.user_id) self.access.userID = result.user_id;
-            self.access.access_token = result.token || result.access_token;
-            self.program.user = username;
-            resolve(result);
-            //console.log("do Login and GO working"+JSON.stringify(access));
-            // saveToken(program.user, access).then(function() {
-            //     self.logdbg("Finished config file write.");
-            // }, function(err) {
-            //     self.logerr("Error writing config file", err);
-            // })
-            // doCLICommand.apply({}, argz)
+            if(result && result.accounts) {
+                var res = result.accounts;
+                console.log("Can't find a solitary account. This user is in accounts:");
+                console.log("Use anyone account to Enter");
+                console.log("------------------------------------------------------------------------");
+                console.log("S.No.| ID\t\t\t\t| Alias\t | Name\t ")
+                console.log("------------------------------------------------------------------------");
+                for (var n = 0; n < res.length; n++) {
+                    var i = n;
+                    if (n < 10) {
+                        i = '0' + n;
+                    }
+                    console.log(i + "   |", res[n].id, "|", res[n].alias, "|", res[n].display_name)
+                }
+                console.log("------------------------------------------------------------------------");
+                while (!self.program.account || self.program.account === null) {
+                    var accountid = readlineSync.question('Enter the Account from the above list which has Authorization ? ')
+                    if(accountid.length < 32) {
+                        try {
+                            self.program.account = res[parseInt(accountid)].id
+                        } catch(err) {
+                            logger.error('Incorrect accountID input. Please enter the correct accountID!');
+                        }
+                    } else {
+                        self.program.account = accountid;
+                    }
+                }
+                resolve(getAuthWithPass(username, password, self.program.account, self));
+            } else {
+                console.log(result);
+                self.access = result;
+                if(result.user_id) self.access.userID = result.user_id;
+                self.access.access_token = result.token || result.access_token;
+                self.program.user = username;
+                resolve(result);
+            }
         }, function(err) {
             logger.error("Failed (getAuthWithPass): ", err)
             reject(err)
@@ -181,6 +204,9 @@ var loginWithPass = function(username, password, withAccountId, logreqCB) {
                     username: username,
                     password: password
                 };
+                if(!!withAccountId) {
+                    body.account = self.program.account;
+                }
                 metric = self._metricIn("POST /auth/login")
             } else {
                 if(self.program.cloud.indexOf('home') > 0) {

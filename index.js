@@ -1219,7 +1219,7 @@ var doCLICommand = function(cmd) {
 
                 }
                 if (!inShell) {
-
+                    program.useAccountsSubpath = true;
                     if ((!program.cloud || !program.user) && !program.access_key) {
                         exitWithError("'shell' mode requires: cloud server, account ID, username and password.");
                     } else {
@@ -1228,7 +1228,6 @@ var doCLICommand = function(cmd) {
                             DCS.getAccounts().then(function(res) {
                                 if (res && res[0] && res[0].id) {
                                     if (res.length == 1) {
-                                        program.useAccountsSubpath = true;
                                         program.account = res[0].id;
                                         console.log("Found", res[0].id, "This user is in a single account.");
                                         console.log("Accountid is set to  "+res[0].id);
@@ -1252,8 +1251,6 @@ var doCLICommand = function(cmd) {
                                             }else{
                                                 program.account = accountid;
                                             }
-
-                                            program.useAccountsSubpath = true;
                                             console.log("Accountid is set to  "+ program.account);
                                         }
                                         /*if(program.account){

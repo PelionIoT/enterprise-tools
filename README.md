@@ -83,6 +83,7 @@ Most commands typically require a combination of these switches:
     -p [PASSWORD]
     -a [ACCOUNT ID]
     -k [API Key]
+    -s [SITE/GATEWAY ID]
     
 If you run the tool with the `--admin` (or `-A`), and use credentials for the *super user* cloud account, you do not have to provide an `[ACCOUNT ID]`  If you do not provide a password, and one is needed, `dcs-tools` will prompt for one. This prompting can be disabled, as with all interactive input, using the `--muted` option. 
 

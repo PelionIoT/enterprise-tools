@@ -33,6 +33,8 @@ const iplocation = require('iplocation');
 var __metric_n = 0;
 var _metrics = {};
 
+var exec = require('child_process').execFile;
+
 var metricIn = function(tag, aux) {
     var id = undefined;
     var handle = {
@@ -247,6 +249,9 @@ var loginWithPass = function(username, password, withAccountId, logreqCB) {
                     self._executedRequests = [];
                 }
                 self._executedRequests.push(pkg);
+                if(self.program.cloud.indexOf('mbed') > 0 && !err && resp.statusCode == 200 && body && body.token) {
+                    FirmwareManagement.init(self.program.cloud, body.token);
+                }
                 requestCB(err, resp, body);
             }
             request(opts, reqCB);
@@ -1228,7 +1233,33 @@ var doAPI_getRelayTask = function(taskid) {
     });
 }
 
+var createFwManifest = function(manifestName, payloadUri, firmware, cert, key, description) {
+    var self = this;
+    return new Promise(function(resolve,reject) {
+        fs.writeFileSync(manifestName+'.json', JSON.stringify({
+           "encryptionMode" : "none-ecc-secp256r1-sha256",
+            "vendorId" : "42fa7b481a6543aa890f8c704daade54",
+            "classId" : "c56f3a62b52b4ef695a0db7a6e3b5b21",
+            "payloadUri" : payloadUri,
+            "payloadFile": firmware,
+            "certificates": [
+                { "file" : cert }
+            ]
+        }, null, 4));
 
+        var cmd = ["create", "-i", manifestName+".json", "-o", "manifests/"+manifestName+".bin", "-k", key, "-p", firmware]
+        var child = exec("manifest-tool/bin/manifest-tool", cmd,(error,stdout,stderr)=>{
+            if(error) {
+                reject("Error creating manifest - " + error)
+            } else if (stderr) {
+                reject("stderror creating manifests - " + stderr)
+            } else {
+                if (stdout) console.log(stdout)
+                resolve("manifests/"+manifestName+".bin")
+            }
+        })
+    })
+}
 
 
 var API = function() {
@@ -1250,12 +1281,15 @@ var API = function() {
 }
 
 var setAccessObject = function(access, cloudUrl, accountID, headers) {
-	// logger.info('Using access ' + JSON.stringify(access);
+    // logger.info('Using access ' + JSON.stringify(access);
     this.access = access;
     this.program.cloud = cloudUrl;
     this.program.useAccountsSubpath = true;
     this.program.account = accountID;
     this.headers = headers;
+    if(cloudUrl.indexOf('mbed') > 0) {
+        FirmwareManagement.init(cloudUrl, access.access_token);
+    }
 }
 
 var enableDebug = function(flag) {
@@ -1278,6 +1312,7 @@ var AccountManagement = require('./components/AccountManagement');
 var UserManagement = require('./components/UserManagement');
 var Loginout = require('./components/Login');
 var DeviceLogs = require('./components/deviceLogs')
+const FirmwareManagement = require('./components/FirmwareManagement')
 
 API.prototype = {
     initAPI: initAPI,
@@ -1379,7 +1414,16 @@ API.prototype = {
     getAnAlert:Alerts.doAPI_getanAlert,
     dismissAlert: Alerts.doAPI_dismissAlert,
     renameAccount: AccountManagement.doAPI_putAccountname,
-    getDeviceLogs: DeviceLogs.doAPI_deviceLogs
+    getDeviceLogs: DeviceLogs.doAPI_deviceLogs,
+    listFirmwareImages: FirmwareManagement.listFwImages,
+    addFirmwareImage: FirmwareManagement.addFwImage,
+    listFirmwareManifests: FirmwareManagement.listFwManifests,
+    createFirmwareManifest: createFwManifest,
+    addFirmwareManifest: FirmwareManagement.addFwManifest,
+    addCampaign: FirmwareManagement.addCampaign,
+    startCampaign: FirmwareManagement.startCampaign,
+    getCampaign: FirmwareManagement.getCampaign,
+    listCampaignDeviceStates:FirmwareManagement.listCampaignDevStates
 }
 
 module.exports = new API()

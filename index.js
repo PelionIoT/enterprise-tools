@@ -474,7 +474,7 @@ var allCommands = 'help info debug metrics login set-accountid set-access-key cr
 +'devStateManagerLogLevel updateDevStateManagerForDevice '
 +'bindRelayToSite bindRelayToExistingSite '
 +'getAlerts getAnAlert dismissAlert getCameraIP '
-+'bleStartScan bleStopScan getBleScanResults getBleConnectedDevice bleConnect bleDisconnect ';
++'bleStartScan bleStopScan getBleScanResults getBleConnectedDevice bleConnect bleDisconnect bleCreate bleAddDevice bleRemoveDevice bleUnsubscribeResourceState bleSubscribeResourceState ';
 
 
 var myCompleter = function(line, callback) {
@@ -6100,56 +6100,159 @@ var doCLICommand = function(cmd) {
                 break;
                 //ble commands
                 case "bleStartScan":
-                    DCS.executeCommand(program.site, "id=\"BluetoothDriver\"", "startScan").then(function(resp) {
+                    var obj = {
+                        "BluetoothDriver": {
+                            "startScan": {}
+                        }
+                    }
+                    DCS.updateResourceState(program.site, obj).then(function(resp) {
                         console.log("OK.")
-                        console.log(resp)
-                        resolve()
-                    }, function(err){
+                        console.log("Results:",util.inspect(resp,{depth:program.depth}));
+                    }, function(err) {
                         logerr("Failed: ", err.statusCode ? (err.statusCode + " --> " + err.statusMessage) : err);
+                    }).then(function(){
                         resolve();
-                        //reject(err);
                     });
                 break;
 
                 case "bleStopScan":
-                    DCS.executeCommand(program.site, "id=\"BluetoothDriver\"", "stopScan").then(function(resp) {
+                    var obj = {
+                        "BluetoothDriver": {
+                            "stopScan": {}
+                        }
+                    }
+                    DCS.updateResourceState(program.site, obj).then(function(resp) {
                         console.log("OK.")
-                        console.log(resp)
-                        resolve()
-                    }, function(err){
+                        console.log("Results:",util.inspect(resp,{depth:program.depth}));
+                    }, function(err) {
                         logerr("Failed: ", err.statusCode ? (err.statusCode + " --> " + err.statusMessage) : err);
+                    }).then(function(){
                         resolve();
-                        //reject(err);
                     });
                 break;
 
+                case "bleUnsubscribeResourceState":
+                    if(!cliArgz[1] || !cliArgz[2]){
+                        exitWithError("Usage: bleUnsubscribeResourceState <resourceID> <state>");
+                        resolve();
+                        break;
+                    }
+                    var obj = {
+                        [cliArgz[1]]: {
+                            "subscribe": {
+                                [cliArgz[2]]: false
+                            }
+                        }
+                    }
+                    DCS.updateResourceState(program.site, obj).then(function(resp) {
+                        console.log("OK.")
+                        console.log("Results:",util.inspect(resp,{depth:program.depth}));
+                    }, function(err) {
+                        logerr("Failed: ", err.statusCode ? (err.statusCode + " --> " + err.statusMessage) : err);
+                    }).then(function(){
+                        resolve();
+                    });
+                break;
+
+                case "bleSubscribeResourceState":
+                    if(!cliArgz[1] || !cliArgz[2]){
+                        exitWithError("Usage: bleSubscribeResourceState <resourceID> <state>");
+                        resolve();
+                        break;
+                    }
+                    var obj = {
+                        [cliArgz[1]]: {
+                            "subscribe": {
+                                [cliArgz[2]]: true
+                            }
+                        }
+                    }
+                    DCS.updateResourceState(program.site, obj).then(function(resp) {
+                        console.log("OK.")
+                        console.log("Results:",util.inspect(resp,{depth:program.depth}));
+                    }, function(err) {
+                        logerr("Failed: ", err.statusCode ? (err.statusCode + " --> " + err.statusMessage) : err);
+                    }).then(function(){
+                        resolve();
+                    });
+                break;
+
+                case "bleAddDevice":
+                    if(!cliArgz[1]){
+                        exitWithError("Enter the device uuid");
+                        resolve();
+                        break;
+                    }
+                    var obj = {
+                        "BluetoothDriver": {
+                            "addDevice": cliArgz[1]
+                        }
+                    }
+                    DCS.updateResourceState(program.site, obj).then(function(resp) {
+                        console.log("OK.")
+                        console.log("Results:",util.inspect(resp,{depth:program.depth}));
+                    }, function(err) {
+                        logerr("Failed: ", err.statusCode ? (err.statusCode + " --> " + err.statusMessage) : err);
+                    }).then(function(){
+                        resolve();
+                    });
+                break;
+
+                case "bleRemoveDevice":
+                    if(!cliArgz[1]){
+                        exitWithError("Enter the device uuid");
+                        resolve();
+                        break;
+                    }
+                    var obj = {
+                        "BluetoothDriver": {
+                            "removeDevice": cliArgz[1]
+                        }
+                    }
+                    DCS.updateResourceState(program.site, obj).then(function(resp) {
+                        console.log("OK.")
+                        console.log("Results:",util.inspect(resp,{depth:program.depth}));
+                    }, function(err) {
+                        logerr("Failed: ", err.statusCode ? (err.statusCode + " --> " + err.statusMessage) : err);
+                    }).then(function(){
+                        resolve();
+                    });
+                break;
                 case "getBleScanResults":
                     if(!program.site){
                         exitWithError("Run set-siteid first");
                         resolve();
                         break;
                     }
-                    DCS.getKeysdata(program.site,'shared','key','Bluetooth-driver.scanresult').then(function(result) {
-                        console.log('OK.')
-                        console.log('----------------------------------------------------------------------');
-                        console.log('UUID         | Mac Address       | RSSI |Supported | Name');
-                        console.log('----------------------------------------------------------------------');
-                        result.keys[0].siblings.forEach(data=> {
-                            var data = JSON.parse(data)
-                            var uuids = Object.keys(data)
-                            uuids.forEach(devicedata=> {
-                                if(data[devicedata].name === undefined) {
-                                    data[devicedata].name = '..............'
-                                }
-                               console.log(data[devicedata].uuid + ' | '+ data[devicedata].address + ' | '+ data[devicedata].rssi+'  | '+data[devicedata].supported+'\t   | '+data[devicedata].name);
-                            })
-                        });
-                    },function(err){
-                        logerr("Failed: ", err.statusCode ? (err.statusCode + " --> " + err.statusMessage) : err)
-                    }).then(function(){
-                        console.log('-----------------------------------------------------------------------');
+                    DCS.getResourceState(program.site, "id=\"BluetoothDriver\"", "peripherals", null).then(function(result) {
+                        console.log("OK.");
+                        console.log("Results:", JSON.parse(result.state.BluetoothDriver.peripherals));
+                    }, function(err) {
+                        logerr("Failed: ", err.statusCode ? (err.statusCode + " --> " + err.statusMessage) : err);
+                    }).then(function() {
                         resolve();
                     })
+                    // DCS.getKeysdata(program.site,'shared','key','Bluetooth-driver.scanresult').then(function(result) {
+                    //     console.log('OK.')
+                    //     console.log('----------------------------------------------------------------------');
+                    //     console.log('UUID         | Mac Address       | RSSI |Supported | Name');
+                    //     console.log('----------------------------------------------------------------------');
+                    //     result.keys[0].siblings.forEach(data=> {
+                    //         var data = JSON.parse(data)
+                    //         var uuids = Object.keys(data)
+                    //         uuids.forEach(devicedata=> {
+                    //             if(data[devicedata].name === undefined) {
+                    //                 data[devicedata].name = '..............'
+                    //             }
+                    //            console.log(data[devicedata].uuid + ' | '+ data[devicedata].address + ' | '+ data[devicedata].rssi+'  | '+data[devicedata].supported+'\t   | '+data[devicedata].name);
+                    //         })
+                    //     });
+                    // },function(err){
+                    //     logerr("Failed: ", err.statusCode ? (err.statusCode + " --> " + err.statusMessage) : err)
+                    // }).then(function(){
+                    //     console.log('-----------------------------------------------------------------------');
+                    //     resolve();
+                    // })
                 break;
 
                 case "getBleConnectedDevice":

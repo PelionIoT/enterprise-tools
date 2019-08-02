@@ -374,16 +374,18 @@ module.exports = {
             }
             self.logdbg("   [PATCH] " + uri)
             var met = self._metricIn("PATCH /sites/" + siteid + "/resources/state")
-            self._authedRequest(null, {
+            var complete_req = {
                 json: true,
                 uri: _uri,
                 method: 'patch',
                 body: obj,
                 headers: {
-                    "username": ID,
-                    "userID": self.access.userID
+                    "username": ID || "00000000000000000000000000000000",
+                    "userID": self.access.userID || "tools.arm.com"
                 }
-            }, function(error, resp, body) {
+            };
+            self.logdbg(complete_req);
+            self._authedRequest(null, complete_req, function(error, resp, body) {
                 if (error) {
                     resp = {};
                     resp.statusMessage = error;

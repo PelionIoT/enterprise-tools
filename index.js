@@ -498,7 +498,7 @@ var allCommands = 'help info debug metrics login set-accountid set-access-key cr
 +'devStateManagerLogLevel updateDevStateManagerForDevice '
 +'bindRelayToSite bindRelayToExistingSite '
 +'getAlerts getAnAlert dismissAlert getCameraIP '
-+'bleStartScan bleStopScan getBleScanResults getBleConnectedDevice bleConnect bleDisconnect bleCreate bleAddDevice bleRemoveDevice bleUnsubscribeResourceState bleSubscribeResourceState bleGetAdapter bleGetState bleListHCI bleResetHCI '
++'bleStartScan bleStopScan bleScanResults getBleConnectedDevice bleConnect bleDisconnect bleCreate bleAddDevice bleRemoveDevice bleUnsubscribeResourceState bleSubscribeResourceState bleGetAdapter bleGetState bleListHCI bleResetHCI '
 +'listFirmwareImages addFirmwareImage '
 +'listFirmwareManifests createFirmwareManifest addFirmwareManifest '
 +'startUpdateCampaign getCampaign listCampaignDeviceStates ';
@@ -6302,7 +6302,7 @@ var doCLICommand = function(cmd) {
                         resolve();
                     });
                 break;
-                case "getBleScanResults":
+                case "bleScanResults":
                     if(!program.site){
                         exitWithError("Run set-siteid first");
                         resolve();
@@ -6310,7 +6310,14 @@ var doCLICommand = function(cmd) {
                     }
                     DCS.getResourceState(program.site, "id=\"BluetoothDriver\"", "peripherals", null).then(function(result) {
                         console.log("OK.");
-                        console.log("Results:", JSON.parse(result.state.BluetoothDriver.peripherals));
+                        console.log("Results:");
+                        var data = JSON.parse(result.state.BluetoothDriver.peripherals)
+                        console.log("uuid \t| name");
+                        console.log("----------------------------");
+                        Object.keys(data).forEach(function(id) {
+                            console.log(id + "\t| " + (data[id].name || '--'));
+                        });
+                        console.log("----------------------------");
                     }, function(err) {
                         logerr("Failed: ", err.statusCode ? (err.statusCode + " --> " + err.statusMessage) : err);
                     }).then(function() {

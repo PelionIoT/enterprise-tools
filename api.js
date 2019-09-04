@@ -274,7 +274,6 @@ var loginWithPass = function(username, password, withAccountId, logreqCB) {
                         self.logdbg("Login OK (200): ", body);
                         resolve(body);
                     } else {
-                        console.log(body);
                         if(body.message === 'One-time password is missing.') {
                             self.loginwith2auth(username, password, withAccountId,logreqCB).then(function(body) {
                                 resolve(body)

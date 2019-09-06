@@ -31,12 +31,8 @@ const publicIp = require('public-ip');
 const iplocation = require('iplocation');
 const readline = require('readline');
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 var counter = 0;
-
+var authtoken = null;
 
 var __metric_n = 0;
 var _metrics = {};
@@ -311,7 +307,7 @@ var loginWithPass = function(username, password, withAccountId, logreqCB) {
 };
 
 
-var question = function (ques) {
+/*var question = function (ques) {
     return new Promise(function(resolve,reject){
         rl.question(ques, (answer)=>{
             if(answer){
@@ -323,72 +319,75 @@ var question = function (ques) {
             }
         })
     })
-}
+}*/
 
 var loginwith2auth = function(username, password, withAccountId, logreqCB) {
     var self = this;
     var metric;
     return new Promise(function(resolve, reject) {
-        question('Two Factor Authorization is applied. Please enter your token ').then(function(otp) {
-            self.logdbg("\nEntered token: ", otp);
-            uri = self.program.cloud + "/auth/login";
-            body = {
-                username: self.program.user,
-                password: self.program.password,
-                otp: otp
-            };
-            if (withAccountId) {
-                body.account = self.program.account;
+        if (counter == 0) {
+            var token = readlineSync.question('Two Factor Authorization is applied. Please enter your token ');
+            authtoken = token;
+        }
+        counter++;
+        self.logdbg("\nEntered token: ", authtoken);
+        uri = self.program.cloud + "/auth/login";
+        body = {
+            username: self.program.user,
+            password: self.program.password,
+            otp: authtoken
+        };
+        if (withAccountId) {
+            body.account = self.program.account;
+        }
+        metric = self._metricIn("POST /auth/login")
+        self.logdbg("   [POST] " + uri, body);
+        var opts = {
+            json: true,
+            uri: uri,
+            method: 'post',
+            body: body
+        };
+
+        function requestCB(err, resp, body) {
+            if (logreqCB && typeof logreqCB == 'function') {
+                logreqCB(self._executedRequests);
             }
-            metric = self._metricIn("POST /auth/login")
-            self.logdbg("   [POST] " + uri, body);
-            var opts = {
-                json: true,
-                uri: uri,
-                method: 'post',
+            if (err) {
+                self.logerr("Error logging in: ", err);
+                reject("Error logging in: " + err);
+            } else {
+                self._metricOut(metric);
+                if (resp && resp.statusCode && resp.statusCode == 200) {
+                    self.logdbg("Login OK (200): ", body);
+                    resolve(body);
+                } else {
+
+                    reject("Invalid response: " + resp.statusCode + " --> " + resp.statusMessage);
+                }
+            }
+        }
+
+        function reqCB(err, resp, body) {
+            var pkg = {};
+            pkg.request = opts;
+            pkg.response = {
+                err: err,
+                statusCode: resp ? resp.statusCode : null,
+                statusMessage: resp ? resp.statusMessage : 'No response message',
                 body: body
             };
-
-            function requestCB(err, resp, body) {
-                if (logreqCB && typeof logreqCB == 'function') {
-                    logreqCB(self._executedRequests);
-                }
-                if (err) {
-                    self.logerr("Error logging in: ", err);
-                    reject("Error logging in: " + err);
-                } else {
-                    self._metricOut(metric);
-                    if (resp && resp.statusCode && resp.statusCode == 200) {
-                        self.logdbg("Login OK (200): ", body);
-                        resolve(body);
-                    } else {
-
-                        reject("Invalid response: " + resp.statusCode + " --> " + resp.statusMessage);
-                    }
-                }
+            if (self._executedRequests && self._executedRequests.length > 300) {
+                logger.error('_executedRequests is not being cleared, this should not happen!');
+                self._executedRequests = [];
             }
-
-            function reqCB(err, resp, body) {
-                var pkg = {};
-                pkg.request = opts;
-                pkg.response = {
-                    err: err,
-                    statusCode: resp ? resp.statusCode : null,
-                    statusMessage: resp ? resp.statusMessage : 'No response message',
-                    body: body
-                };
-                if (self._executedRequests && self._executedRequests.length > 300) {
-                    logger.error('_executedRequests is not being cleared, this should not happen!');
-                    self._executedRequests = [];
-                }
-                self._executedRequests.push(pkg);
-                if (self.program.cloud.indexOf('mbed') > 0 && !err && resp.statusCode == 200 && body && body.token) {
-                    FirmwareManagement.init(self.program.cloud, body.token);
-                }
-                requestCB(err, resp, body);
+            self._executedRequests.push(pkg);
+            if (self.program.cloud.indexOf('mbed') > 0 && !err && resp.statusCode == 200 && body && body.token) {
+                FirmwareManagement.init(self.program.cloud, body.token);
             }
-            request(opts, reqCB);
-        })
+            requestCB(err, resp, body);
+        }
+        request(opts, reqCB);
     }, function(err) {
         reject('Please provide correct token');
     })

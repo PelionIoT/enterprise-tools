@@ -272,6 +272,72 @@ module.exports = {
             }
         });
     },
+    doAPI_getPelionDevices: function(eid, logreqCB) {
+        var self = this;
+        self._executedRequests = [];
+        return new Promise(function(resolve, reject) {
+            var _uri = self._toMbedApiUri("/v3/devices");
+            self._authedRequest(null, {
+                uri: _uri,
+                json: true,
+                method: 'get'
+            }, function(error, resp, body) {
+                if (logreqCB && typeof logreqCB == 'function') {
+                    logreqCB(self._executedRequests);
+                }
+                if (error) {
+                    resp = {};
+                    resp.statusMessage = error;
+                    resp.statusCode = 500;
+                    reject(resp);
+                    //reject(error)
+                    // console.log("Error on /api/requests: ", err);
+                    // process.exit(1);
+                } else {
+
+                    if (resp && resp.statusCode && resp.statusCode == 200) {
+                        resolve(body);
+                    } else {
+                        reject(resp);
+                        //reject("Invalid response: " + resp.statusCode + " --> " + resp.statusMessage);
+                    }
+                }
+            });
+        });
+    },
+    doAPI_getEnrollmentID: function(eid, logreqCB) {
+        var self = this;
+        self._executedRequests = [];
+        return new Promise(function(resolve, reject) {
+            var _uri = self._toMbedApiUri("/v3/device-enrollments");
+            self._authedRequest(null, {
+                uri: _uri,
+                json: true,
+                method: 'get'
+            }, function(error, resp, body) {
+                if (logreqCB && typeof logreqCB == 'function') {
+                    logreqCB(self._executedRequests);
+                }
+                if (error) {
+                    resp = {};
+                    resp.statusMessage = error;
+                    resp.statusCode = 500;
+                    reject(resp);
+                    //reject(error)
+                    // console.log("Error on /api/requests: ", err);
+                    // process.exit(1);
+                } else {
+
+                    if (resp && resp.statusCode && resp.statusCode == 200) {
+                        resolve(body);
+                    } else {
+                        reject(resp);
+                        //reject("Invalid response: " + resp.statusCode + " --> " + resp.statusMessage);
+                    }
+                }
+            });
+        });
+    },
     doAPI_uploadEnrollmentID: function(eid, logreqCB) {
         var self = this;
         self._executedRequests = [];

@@ -1426,6 +1426,8 @@ API.prototype = {
     postRelayTasks: doAPI_postRelayTasks,
     getRelayTask: doAPI_getRelayTask,
     uploadEnrollmentID: RelayManagement.doAPI_uploadEnrollmentID,
+    getEnrollmentID: RelayManagement.doAPI_getEnrollmentID,
+    getPelionDevices: RelayManagement.doAPI_getPelionDevices,
     patchRelays: RelayManagement.doAPI_patchRelays,
     postSchedule: Schedules.doAPI_postSchedule,
     getSchedules: Schedules.doAPI_getSchedules,

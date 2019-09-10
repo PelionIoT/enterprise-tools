@@ -477,7 +477,7 @@ var allCommands = 'help info debug metrics login set-accountid set-access-key cr
 +'startTunnel getLoginHistory '
 +'postRequests getDeviceLogs '
 +'getHistory getRelays getRelay moveRelayToAccount moveRelayToSite importRelay importRelays moveRelayToAnotherSite uploadEnrollmentID getEnrollmentIDs '
-+'nocache listSiteResources listDevices getPelionDevices getControlableResourceStates forgetSiteResource getSiteResourceState updateSiteResourceState getResponse createSite getSites getSiteInfo siteName updateSite renameSite deleteSite siteMap '
++'nocache listSiteResources listDevices getPelionDevices getPelionEdgeGateways getControlableResourceStates forgetSiteResource getSiteResourceState updateSiteResourceState getResponse createSite getSites getSiteInfo siteName updateSite renameSite deleteSite siteMap '
 +'getSiteinterfaces getSiteresourcetypes getDeviceInterfaces '
 +'getAccounts getAccountsExt renameAccount '
 +'postSchedule getSchedules getaSchedule putSchedule deleteSchedule deleteSchedulesAll '
@@ -4856,6 +4856,16 @@ var doCLICommand = function(cmd) {
 
             case "getPelionDevices":
                 DCS.getPelionDevices().then(function(resp) {
+                    console.log('OK. Response ', resp);
+                    resolve();
+                }, function(err) {
+                    logerr("Failed. Error:", err.statusCode ? (err.statusCode + " --> " + err.statusMessage) : err);
+                    resolve();
+                })
+            break;
+
+            case "getPelionEdgeGateways":
+                DCS.getPelionEdgeGateways().then(function(resp) {
                     console.log('OK. Response ', resp);
                     resolve();
                 }, function(err) {

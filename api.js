@@ -1428,6 +1428,7 @@ API.prototype = {
     uploadEnrollmentID: RelayManagement.doAPI_uploadEnrollmentID,
     getEnrollmentID: RelayManagement.doAPI_getEnrollmentID,
     getPelionDevices: RelayManagement.doAPI_getPelionDevices,
+    getPelionEdgeGateways: RelayManagement.doAPI_getPelionEdgeGateways,
     patchRelays: RelayManagement.doAPI_patchRelays,
     postSchedule: Schedules.doAPI_postSchedule,
     getSchedules: Schedules.doAPI_getSchedules,
